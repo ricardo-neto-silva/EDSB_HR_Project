@@ -1,0 +1,16 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Environments
+.venv/
+
+# Data & outputs (adjust as needed)
+data/raw/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Windows 
+Thumbs.db
+Desktop.ini
