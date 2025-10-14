@@ -14,3 +14,6 @@ data/raw/
 # Windows 
 Thumbs.db
 Desktop.ini
+
+# Ignore the tmp folder inside src
+/src/tmp/
