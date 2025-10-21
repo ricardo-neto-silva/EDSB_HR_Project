@@ -138,4 +138,118 @@ plt.show()
 # - Ordinal satisfaction and variables show limited spread, consistent with their discrete scale, with some level of skew toward higher values. Their limited range may reduce their explanatory power.
 # - PerformanceRating shows very little variation (nearly all values at level 3) confirming its limited usefulness as a predictive feature.
 
+# %%
+# Selecionar apenas colunas do tipo object (qualitativas)
+categorical_cols = data.select_dtypes(include='object').columns.tolist()
+
+# Remover a variável Attrition da lista
+if 'Attrition' in categorical_cols:
+    categorical_cols.remove('Attrition')
+
+# Criar gráficos para cada variável qualitativa
+for col in categorical_cols:
+    plt.figure(figsize=(10, 6))
+    
+    # Criar tabela de contingência
+    contingency = data.groupby([col, 'Attrition']).size().unstack(fill_value=0)
+    
+    ax = sns.countplot(x=data[col], hue=data['Attrition'])
+    
+    for container in ax.containers:
+        labels = []
+        for i, bar in enumerate(container):
+            height = bar.get_height()
+            if height > 0:
+                # Obter a categoria pela posição da barra
+                categories = data[col].unique()
+                category = categories[i] if i < len(categories) else categories[0]
+                category_total = len(data[data[col] == category])
+                percentage = (height / category_total) * 100
+                labels.append(f'{percentage:.1f}%\n(n={int(height)})')
+            else:
+                labels.append('')
+        ax.bar_label(container, labels=labels)
+    
+    plt.title(f'Distribution of {col} by Attrition')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.show()
+
+# %% [markdown]
+# By analyzing these bar charts, we can identify notable differences in the distribution of Attrition across our categorical variables. Key findings include:
+# 
+# - **Business Travel**: Higher travel frequency might correlate with increased attrition rates, considering the differences between their percentages. This may suggest that frequent business travel may negatively impact employee retention.
+# 
+# - **Education Field and Job Role**: While some correlation between education field and job role is probable (Human Resources, for instance), the Job Role variable reveals a striking pattern: Sales Representatives show nearly 40% attrition rate, significantly higher than other positions.
+# 
+# - **Marital Status**: Single employees demonstrate substantially higher attrition rates compared to their married counterparts. The proportion of single employees leaving the company is more than double that of married employees (relative to their respective group sizes), indicating that marital status may be a relevant predictor of attrition.
+# 
+# These preliminary observations suggest that work-life balance factors (travel, marital status) and specific job roles warrant further investigation in our analysis.
+
+# %% [markdown]
+# We will also analyze the numerical variables in our dataset. However, before proceeding, it would be interesting to explore a potential relationship between MonthlyIncome and MonthlyRate. While MonthlyIncome represents the actual salary an employee receives each month, MonthlyRate might reflect the hourly rate or the standardized value the company attributes to that employee on a monthly basis. 
+# 
+# To investigate this relationship, we propose creating a new variable - Income_Rate_Ratio - which will capture the ratio between these two metrics and may provide insights into compensation structures and their potential impact on attrition.
+
+# %%
+data['Income_Rate_Ratio'] = data['MonthlyIncome'] / data['MonthlyRate']
+
+# %%
+# Dicionário para guardar as percentagens
+percentage_dict = {}
+
+numeric_cols = data.select_dtypes(include=['int64', 'float64']).columns.tolist()
+
+for col in numeric_cols:
+    plt.figure(figsize=(8, 5))
+    ax = sns.barplot(x=data['Attrition'], y=data[col], errorbar='sd')
+
+    # Remover a variável Attrition da lista
+    if 'Attrition' in numeric_cols:
+        numeric_cols.remove('Attrition')
+
+    # Calcular médias
+    means = data.groupby('Attrition')[col].mean()
+    
+    mean_no = means.get('No', means.iloc[0])
+    mean_yes = means.get('Yes', means.iloc[1])
+    
+    # Calcular diferença e percentagem
+    difference = mean_yes - mean_no
+    percentage = ((mean_yes / mean_no) - 1) * 100 if mean_no != 0 else 0
+    
+    # Guardar percentagem
+    percentage_dict[col] = percentage
+    
+    # Adicionar valores das médias
+    for container in ax.containers:
+        ax.bar_label(container, fmt='%.2f')
+    
+    # Adicionar texto com a relação entre médias
+    plt.text(0.5, 0.95, f'Difference: {difference:.2f} | Change: {percentage:.1f}%', 
+             transform=ax.transAxes, ha='center', va='top',
+             bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+    
+    plt.title(f'Mean {col} by Attrition')
+    plt.tight_layout()
+    plt.show()
+
+# Mostrar top 10 variáveis com maior percentagem (em valor absoluto)
+top_10 = pd.Series(percentage_dict).abs().sort_values(ascending=False).head(10)
+print("\nTop 10 variáveis com maior variação percentual:")
+print(top_10)
+
+# %% [markdown]
+# By analyzing the variables with the largest percentage differences between attrition outcomes, several key patterns emerge:
+# 
+# - **OverTime** demonstrates by far the highest percentage variation (128.6%), more than three times greater than any other variable. This suggests that overtime work is the single most critical factor associated with employee attrition and warrants immediate attention in retention strategies.
+# 
+# - **Stock Options** show a substantial 37.6% variation, with employees possessing stock options exhibiting significantly lower attrition rates. This suggests that equity compensation may serve as an effective retention strategy, by strengthening organizational commitment and long-term alignment with the company's success.
+# 
+# - **Tenure-related variables** (Years in Current Role: 35.3%, Years with Current Manager: 34.7%, Years at Company: 30.4%, Total Working Years: 30.5%) consistently rank among the top differentiators. Employees with higher tenure across these dimensions show lower attrition rates, indicating that role stability, manager continuity, and organizational tenure contribute positively to retention.
+# 
+# - The newly created **Income_Rate_Ratio** (30.7%) exhibits greater percentage variation than either MonthlyIncome (29.9%) or MonthlyRate alone. This suggests that the relationship between these compensation metrics may reveal misalignment between employee remuneration and their perceived organizational value, potentially contributing to attrition decisions.
+# 
+# However, these observations are preliminary and reflect observable relationships. Statistical testing and multivariate analysis will be necessary to establish the strength and significance of these relationships while controlling for potential confounding variables and interactions.
+
 
