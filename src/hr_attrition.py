@@ -19,6 +19,7 @@
 # ## 1. Importing Packages
 
 # %%
+import numpy as np
 import pandas as pd
 from summarytools import dfSummary
 import matplotlib.pyplot as plt
@@ -146,7 +147,7 @@ plt.show()
 feature_groups = {
     "binary": ['Gender', 'OverTime'],
     "ordinal": [
-        'BusinessTravel','Education','EnvironmentSatisfaction','JobInvolvement',
+        'Education','EnvironmentSatisfaction','JobInvolvement',
         'JobLevel','JobSatisfaction','PerformanceRating',
         'RelationshipSatisfaction','StockOptionLevel','WorkLifeBalance'
     ]
@@ -256,6 +257,117 @@ for feature in feature_groups['non-continuous']:
 # Stock ownership
 # 
 # - Employees with no stock options (stock option level 0) are more prone to quitting. This is not surprising, as offering stock is a common strategy to increase engagement.
+
+# %%
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Ensure Attrition is binary for plotting aesthetics
+df_plot = data.copy()
+df_plot["Attrition"] = df_plot["Attrition"].astype(str)
+
+#attrition_num = df_plot["Attrition"]
+
+continuous_vars = feature_groups["continuous"]
+
+def plot_kde_violin(df, col):
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    
+    # KDE plot
+    sns.kdeplot(
+        data=df, x=col, hue="Attrition",
+        common_norm=False, fill=True, alpha=0.4, ax=axes[0]
+    )
+    axes[0].set_title(f"KDE of {col} by Attrition")
+    axes[0].set_xlabel(col)
+    axes[0].set_ylabel("Density")
+    
+    # Violin plot
+    sns.violinplot(
+        data=df, hue="Attrition", y=col,
+        inner="box", ax=axes[1]
+    )
+    axes[1].set_title(f"Violin Plot of {col} by Attrition")
+    axes[1].set_xlabel("Attrition")
+    axes[1].set_ylabel(col)
+    
+    plt.tight_layout()
+    plt.show()
+
+# Generate combined plots for all continuous variables
+for col in continuous_vars:
+    plot_kde_violin(df_plot, col)
+
+
+# %% [markdown]
+# 
+# Some features show noticeable differences in their probability distributions depending on whether the employee quit or stayed.
+# 
+# Age and career stage
+# 
+# - Employees who quit tend to be younger.
+# 
+# - This aligns with lower values observed in Total Working Years, Years at Company, Years in Current Role, and Years with Current Manager.
+# 
+# Early-career employees may be more inclined to change jobs or roles, contributing to these lower tenure metrics.
+# 
+# Compensation
+# 
+# - Monthly income appears influential: employees with lower income are more likely to leave, which is expected. The same applies to daily rate.
+# 
+# Distance from home
+# 
+# - The larger the distance from home to work, the more likely the employees are to leave.
+# 
+# Other features
+# 
+# - The remaining continuous features either show similar distributions across attrition groups or differences too small to be clearly meaningful.
+
+# %%
+data["Attrition"].head()
+
+# %%
+df_corr = data.copy()
+
+ordinal_features = feature_groups["ordinal"]
+continuous_features = feature_groups["continuous"]
+
+spearman_vars = continuous_features + ordinal_features + ["Attrition"]
+df_spearman = df_corr[spearman_vars]
+
+df_corr["Attrition"].head()
+
+# %%
+spearman_matrix = df_spearman.corr(method="spearman")
+
+# %%
+attrition_corr = spearman_matrix["Attrition"].drop("Attrition")
+attrition_corr_sorted = attrition_corr.sort_values(ascending=False)
+
+print(attrition_corr_sorted)
+
+
+# %%
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(14, 12))
+mask = np.triu(np.ones_like(spearman_matrix, dtype=bool))
+
+sns.heatmap(spearman_matrix, mask=mask, cmap="coolwarm", center=0, annot = True, fmt=".2f", square=True, cbar_kws={"shrink": .8})
+plt.title("Spearman Correlation Matrix")
+plt.show()
+
+
+# %%
+top_features = attrition_corr_sorted.abs().sort_values(ascending=False).head(12).index
+
+plt.figure(figsize=(10, 8))
+sns.heatmap(spearman_matrix.loc[top_features, top_features],
+            cmap="coolwarm", center=0, annot=True, fmt=".2f")
+plt.title("Top Spearman Correlated Variables")
+plt.show()
+
 
 # %%
 categorical_features = list(data.select_dtypes(include='object').columns.drop(['BusinessTravel']))
