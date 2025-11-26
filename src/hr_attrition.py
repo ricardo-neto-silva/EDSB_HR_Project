@@ -138,6 +138,138 @@ plt.show()
 # - Ordinal satisfaction and variables show limited spread, consistent with their discrete scale, with some level of skew toward higher values. Their limited range may reduce their explanatory power.
 # - PerformanceRating shows very little variation (nearly all values at level 3) confirming its limited usefulness as a predictive feature.
 
+# %% [markdown]
+# Subsequent steps may differ based on the category of each feature. Therefore, we’ll create lists that group feature names by their respective types.
+
+# %%
+# Explicitly define groups that cannot be inferred reliably
+feature_groups = {
+    "binary": ['Gender', 'OverTime'],
+    "ordinal": [
+        'BusinessTravel','Education','EnvironmentSatisfaction','JobInvolvement',
+        'JobLevel','JobSatisfaction','PerformanceRating',
+        'RelationshipSatisfaction','StockOptionLevel','WorkLifeBalance'
+    ]
+}
+
+# Infer remaining types
+all_features = data.columns.drop('Attrition')
+
+# Categorical = object dtype except those explicitly listed
+explicit_non_continuous = feature_groups["binary"] + feature_groups["ordinal"]
+categorical = (
+    data.select_dtypes(include='object')
+        .columns.difference(explicit_non_continuous)
+        .tolist()
+)
+
+# Continuous = numeric except explicit lists
+continuous = (
+    all_features
+        .difference(categorical + explicit_non_continuous)
+        .tolist()
+)
+
+feature_groups["categorical"] = categorical
+feature_groups["continuous"] = continuous
+feature_groups['non-continuous'] = feature_groups['binary'] + feature_groups['ordinal'] + categorical
+
+feature_groups
+#
+
+# %% [markdown]
+# Let's now look at the distribution of our non-continuous features.
+
+# %%
+for feature in feature_groups['non-continuous']:
+
+    ax = sns.countplot(y=data[feature],order=data[feature].value_counts(ascending=False).index)
+    ax.set_xlabel('Number of Employees')
+
+    # Get data label values and concatenate them
+    abs_values = data[feature].value_counts(ascending=False).values
+    rel_values = data[feature].value_counts(ascending=False, normalize=True).values * 100
+    data_labels = [f'{label[0]} ({label[1]:.1f}%)' for label in zip(abs_values, rel_values)]
+
+    ax.bar_label(container=ax.containers[0], labels=data_labels)
+    ax.margins(x=0.25)
+    
+ 
+    plt.show()
+
+# %% [markdown]
+# From the variables that, a priori, we'd think could be related with attrition we find that:
+#  - roughly 30% of employees work overtime
+#  - roughly 40% have low to medium levels of satisfaction with the work environment
+#  - roughly 30% report low to medium levels of job involvement
+#  - nearly 40% report low to medium job satisfaction
+#  - another nearly 40% have low to medium levels of satisfaction with relationships at work
+#  - and about 5% report bad work-life balance
+
+# %% [markdown]
+# To better understand what might be contributing to employees’ decisions to quit, we'll next plot the non-continuous features against the target variable. We’ll also measure the attrition rate within each category. This will show us whether some groups are more prone to leaving than others, irrespective of their overall frequency.
+
+# %%
+for feature in feature_groups['non-continuous']:
+
+    # Get within category proportions
+    proportions = data.groupby(feature)['Attrition'].value_counts(normalize=True)
+
+    # Plot
+    ax = sns.countplot(y=data[feature], hue=data['Attrition'], order=data[feature].value_counts().sort_index().index)
+    ax.set_xlabel('Number of Employees')
+
+    # Insert proportions as data labels
+    for i, container in enumerate(ax.containers):
+        labels = [f'{proportions.loc[d,i]:.1%}' for d in sorted(data[feature].unique())]
+        ax.bar_label(container, labels)
+
+    ax.margins(x=0.15)
+
+    plt.show()
+
+# %% [markdown]
+# From the plots above we find the following trends:
+# 
+# Department-level & Job roles:
+# 
+# - Sales and Human Resources show a higher proportion of employees quitting compared to R&D.
+# 
+# - Within job roles, HR professionals tend to leave more often, but so do Lab Technicians, even though they are part of the R&D department.
+# 
+# - Sales Representatives have the highest attrition rate across all job roles, whereas higher-level roles—such as managers and directors—show very low attrition.
+# 
+# Personal characteristics
+# 
+# - Single employees appear more likely to quit.
+# 
+# Work conditions and workload
+# 
+# - Employees who work overtime, travel frequently, or have poor work–life balance are more likely to leave.
+# 
+# - Low satisfaction with the work environment, job involvement, overall job satisfaction, and relationships at work is also strongly associated with higher attrition.
+# 
+# Job level and hierarchy
+# 
+# - Employees in lower hierarchical levels tend to leave more often. However, attrition proportions do not strictly follow the hierarchical ranking order.
+# 
+# Stock ownership
+# 
+# - Employees with no stock options (stock option level 0) are more prone to quitting. This is not surprising, as offering stock is a common strategy to increase engagement.
+
+# %%
+categorical_features = list(data.select_dtypes(include='object').columns.drop(['BusinessTravel']))
+
+binary_features = ['Gender','OverTime']
+
+ordinal_features = ['BusinessTravel','Education','EnvironmentSatisfaction','JobInvolvement',
+                    'JobLevel', 'JobSatisfaction','PerformanceRating',
+                    'RelationshipSatisfaction','StockOptionLevel','WorkLifeBalance']
+
+non_continuous_features = categorical_features + binary_features + ordinal_features
+
+continuous_features = list(data.columns.difference(non_continuous_features).drop(['Attrition']))
+
 # %%
 # Selecionar apenas colunas do tipo object (qualitativas)
 categorical_cols = data.select_dtypes(include='object').columns.tolist()
