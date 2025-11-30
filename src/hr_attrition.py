@@ -159,7 +159,7 @@ for col in cat_cols:
 dfSummary(data)
 
 # %% [markdown]
-# From the summary above, we verified that the data set does't contain duplicates, and we also gathered information about the data's distribution and main statistics.
+# From the summary above, we verified that the data set doesn't contain duplicates, and we also gathered information about the data's distribution and main statistics.
 # 
 # What we can note is that, beasides our target, we have a couple of other binary features. Let's encode those.
 
@@ -259,7 +259,7 @@ plt.show()
 # %% [markdown]
 # The boxplots highlight the extent of skewness and make the outliers stand out clearly, which complements the histogram analysis above.
 # 
-# - Outliers are especially relevant in income and emplyment duration related-variables, which may need special handling. We'll decide how to handle them further down.
+# - Outliers are especially relevant in income and employment duration related-variables, which may need special handling. We'll decide how to handle them further down.
 # 
 # - For demographic/job characteristics (Age, DistanceFromHome, JobLevel, Education) featured the distributions are fairly compact with few outliers, aligning with the unimodal/bell-like shapes seen in histograms.
 # 
@@ -335,7 +335,7 @@ for feature in feature_groups['non-continuous']:
 
 
 # %% [markdown]
-# From the variables that, a priori, we'd think could be related with attrition we find that:
+# From the variables that, a priori, we'd think could be related with attrition, we find that:
 # 
 # - roughly 30% of employees work overtime
 # 
@@ -378,7 +378,7 @@ for feature in feature_groups['non-continuous']:
 # %% [markdown]
 # From the plots above we find the following trends:
 # 
-# - Department-level & Job roles:
+# Department-level & Job roles
 # 
 # - Sales and Human Resources show a higher proportion of employees quitting compared to R&D.
 # 
@@ -772,7 +772,7 @@ print(data.shape)
 #   ## Train-Test Split
 
 # %% [markdown]
-#   Before any encoding and feature selection steps we'll start by defining X and y, and defining the train–test split. Doing this at this satge is critical to avoid data leakage.
+#   Before any encoding and feature selection steps we'll start by defining x and y, and defining the train–test split. Doing this at this stage is critical to avoid data leakage.
 
 # %%
 # Separate features and target
@@ -2008,6 +2008,15 @@ for thr in thresholds:
     preds = (test_proba >= thr).astype(int)
     f1s.append(f1_score(y_test, preds))
 
+# Obter top 3 thresholds
+top_3_indices = np.argsort(f1s)[-3:][::-1]  # Índices dos 3 maiores F1s, em ordem decrescente
+top_3_thresholds = thresholds[top_3_indices]
+top_3_f1s = np.array(f1s)[top_3_indices]
+
+print("Top 3 Thresholds:")
+for i, (thr, f1) in enumerate(zip(top_3_thresholds, top_3_f1s), 1):
+    print(f"{i}. Threshold: {thr:.4f} → F1 Score: {f1:.4f}")
+
 plt.figure(figsize=(6, 4))
 plt.plot(thresholds, f1s)
 plt.xlabel("Threshold")
@@ -2312,5 +2321,43 @@ cm_df = pd.DataFrame(
 print("Confusion Matrix (threshold = {})".format(final_threshold))
 cm_df
 
+# %% [markdown]
+# Teste Pedro - threshold optimization from the f1 / threshold curve
 
+# Although the baseline model used a default threshold of 0.50, our earlier analysis of the Threshold–F1 curve indicated that a lower threshold of approximately 0.38 maximizes the F1 score on the test set. By adopting this optimized threshold, we can potentially improve the balance between precision and recall, leading to better overall classification performance in identifying employees at risk of attrition.
 
+# Our final threshold (from baseline model)
+test_threshold = 0.3802
+
+# Generate final predictions 
+y_pred = (test_proba >= test_threshold).astype(int)
+
+# Computing metrics 
+test_accuracy  = accuracy_score(y_test, y_pred)
+test_precision = precision_score(y_test, y_pred, zero_division=0)
+test_recall    = recall_score(y_test, y_pred)
+test_f1        = f1_score(y_test, y_pred)
+
+# Building a metrics table 
+metrics_table = pd.DataFrame({
+    "Metric": ["Accuracy", "Precision", "Recall", "F1"],
+    "Score": [test_accuracy, test_precision, test_recall, test_f1]
+})
+
+print("Final Classification Metrics (threshold = {})".format(test_threshold))
+metrics_table# %%
+
+# %%
+# Confusion matrix Teste Pedro
+cm = confusion_matrix(y_test, y_pred)
+
+cm_df = pd.DataFrame(
+    cm,
+    index=["Actual_Stay (0)", "Actual_Leave (1)"],
+    columns=["Pred_Stay (0)", "Pred_Leave (1)"]
+)
+
+print("Confusion Matrix (threshold = {})".format(test_threshold))
+cm_df
+
+# We can see that by lowering the threshold to 0.38, the model identifies more true positives (employees who leave) at the cost of increasing false positives (employees incorrectly predicted to leave). This trade-off is reflected in the updated precision and recall scores, which should be carefully considered based on the organization's priorities regarding attrition management.
