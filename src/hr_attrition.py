@@ -1,20 +1,32 @@
 # %% [markdown]
-# ## **_Enterprise Data Science and Analytics - Enterprise Data Science Bootcamp_**
+#  ## **_Enterprise Data Science and Analytics - Enterprise Data Science Bootcamp_**
 # 
 # 
-# ### **HR Attrition Project - EDSB25_26**
 # 
 # 
-# - Ana Rita Martins 20240821
 # 
-# - Joana Coelho 2024080
+#  ### **HR Attrition Project - EDSB25_26**
 # 
-# - Pedro Fernandes 20240823
 # 
-# - Ricardo Silva 20240824
+# 
+# 
+# 
+#  - Ana Rita Martins 20240821
+# 
+# 
+# 
+#  - Joana Coelho 2024080
+# 
+# 
+# 
+#  - Pedro Fernandes 20240823
+# 
+# 
+# 
+#  - Ricardo Silva 20240824
 
 # %% [markdown]
-# Data Science and Analytics are reshaping how organizations solve problems across diverse industries. Through systematic data analysis and predictive modeling, evidence-based solutions can be developed, enabling more reliable decision-making and greater efficiency.
+#  Data Science and Analytics are reshaping how organizations solve problems across diverse industries. Through systematic data analysis and predictive modeling, evidence-based solutions can be developed, enabling more reliable decision-making and greater efficiency.
 # 
 # 
 # 
@@ -46,7 +58,6 @@
 # 
 # 
 # 
-# In Human Resources, predictive analytics supports critical functions such as employee retention, workforce planning, and automated CV screening.
 # 
 # 
 # 
@@ -78,10 +89,75 @@
 # 
 # 
 # 
-# This project focuses on developing predictive models to assess the likelihood of employee resignation. By analyzing factors ranging from demographics to job satisfaction, the models aim to provide interpretable insights that highlight key drivers of attrition. These insights will help HR leaders take proactive steps to reduce turnover and retain talent.
+# 
+#  In Human Resources, predictive analytics supports critical functions such as employee retention, workforce planning, and automated CV screening.
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#  This project focuses on developing predictive models to assess the likelihood of employee resignation. By analyzing factors ranging from demographics to job satisfaction, the models aim to provide interpretable insights that highlight key drivers of attrition. These insights will help HR leaders take proactive steps to reduce turnover and retain talent.
 
 # %% [markdown]
-# ## 1. Importing Packages
+#  ## 1. Importing Packages
 
 # %%
 import numpy as np
@@ -112,8 +188,9 @@ from sklearn.metrics import precision_recall_curve, average_precision_score
 from sklearn.base import clone
 
 
+
 # %% [markdown]
-# ## 2. Importing Data and Initial Exploration
+#  ## 2. Importing Data and Initial Exploration
 
 # %%
 data = pd.read_csv('../data/raw/HR_Attrition_Dataset.csv')
@@ -123,13 +200,16 @@ print(data.head())
 
 
 
+
 # %%
 data.info()
+
 
 
 # %%
 pd.set_option('display.max_columns', None) 
 data.describe() 
+
 
 
 # %%
@@ -139,11 +219,13 @@ data.describe(include='object')
 
 
 
+
 # %% [markdown]
-# From this initial inspection what immediately stands out is that we have 3 constant features: "EmployeeCount", "StandardHours", and "Over18". We can remove those straight away. Additionally, the employee number (ID) feature, does not seem to contain any relevant info, and  we'll drop it too.
+#  From this initial inspection what immediately stands out is that we have 3 constant features: "EmployeeCount", "StandardHours", and "Over18". We can remove those straight away. Additionally, the employee number (ID) feature, does not seem to contain any relevant info, and  we'll drop it too.
 
 # %%
 data.drop(columns=['EmployeeCount','Over18','StandardHours','EmployeeNumber'],inplace=True)
+
 
 
 # %%
@@ -155,13 +237,17 @@ for col in cat_cols:
     print("\n") 
 
 
+
 # %%
 dfSummary(data)
 
+
 # %% [markdown]
-# From the summary above, we verified that the data set doesn't contain duplicates, and we also gathered information about the data's distribution and main statistics.
+#  From the summary above, we verified that the data set doesn't contain duplicates, and we also gathered information about the data's distribution and main statistics.
 # 
-# What we can note is that, beasides our target, we have a couple of other binary features. Let's encode those.
+# 
+# 
+#  What we can note is that, beasides our target, we have a couple of other binary features. Let's encode those.
 
 # %%
 data['Attrition'] = data['Attrition'].map({'Yes': 1, 'No': 0})
@@ -174,8 +260,9 @@ data.head()
 
 
 
+
 # %% [markdown]
-# Let's now have a look at how the distribution of the target variable.
+#  Let's now have a look at how the distribution of the target variable.
 
 # %%
 ax = sns.countplot(x=data['Attrition'], hue=data['Attrition'], legend=False)
@@ -186,11 +273,13 @@ plt.title('Distribution of the Target Variable (Attrition)')
 plt.show()
 
 
+
 # %% [markdown]
-# We can observe that our target cariable is quite imbalanced. This will require extra attention in later steps, namely when splitting the dataset into train, validation and test sets, as well as during the modelling stage.
+#  We can observe that our target cariable is quite imbalanced. This will require extra attention in later steps, namely when splitting the dataset into train, validation and test sets, as well as during the modelling stage.
 
 # %%
 data.shape
+
 
 
 
@@ -203,11 +292,12 @@ data.head(3)
 
 
 
-# %% [markdown]
-# # **3. Exploratory Data Analysis**
 
 # %% [markdown]
-# We'll start by plotting histograms to visually assess the distribution of the numeric features; this will allows us to spot any relevant patterns or trends in the data.
+#  # **3. Exploratory Data Analysis**
+
+# %% [markdown]
+#  We'll start by plotting histograms to visually assess the distribution of the numeric features; this will allows us to spot any relevant patterns or trends in the data.
 
 # %%
 data.hist(figsize=(20, 15))
@@ -217,21 +307,35 @@ plt.show()
 
 
 
+
 # %% [markdown]
-# The histograms reveal some important patterns in the dataset.
+#  The histograms reveal some important patterns in the dataset.
 # 
 # 
-# - Once again we can observe that the **target variable** is highly skewed toward staying in the company.
 # 
-# - Concerning demographics, **age** follows an approximately bell-shaped distribution, centered around 30-40; **Gender** is skewed with more males than females.
 # 
-# - Features that are related to **work characteristics** (YearsAtCompany, TotalWorkingYears, YearsInCurrentRole, Overtime) are right-skewed, indicating many relatively new employees and fewer with long careers; working overtime is not common.
 # 
-# - **Income**: Salaries and rates are right-skewed, with few very high earners.
+#  - Once again we can observe that the **target variable** is highly skewed toward staying in the company.
 # 
-# - **Satisfaction-related** variables are discrete and somewhat skewed toward higher ratings, while PerformanceRating shows very little variation (nearly all at level 3), suggesting limited predictive value.
 # 
-# Overall, the data displays strong imbalance and skewness patterns that will require careful consideration during modeling, suggesting it could benefit from stratified splits, and algorithms robust to class imbalance.
+# 
+#  - Concerning demographics, **age** follows an approximately bell-shaped distribution, centered around 30-40; **Gender** is skewed with more males than females.
+# 
+# 
+# 
+#  - Features that are related to **work characteristics** (YearsAtCompany, TotalWorkingYears, YearsInCurrentRole, Overtime) are right-skewed, indicating many relatively new employees and fewer with long careers; working overtime is not common.
+# 
+# 
+# 
+#  - **Income**: Salaries and rates are right-skewed, with few very high earners.
+# 
+# 
+# 
+#  - **Satisfaction-related** variables are discrete and somewhat skewed toward higher ratings, while PerformanceRating shows very little variation (nearly all at level 3), suggesting limited predictive value.
+# 
+# 
+# 
+#  Overall, the data displays strong imbalance and skewness patterns that will require careful consideration during modeling, suggesting it could benefit from stratified splits, and algorithms robust to class imbalance.
 
 # %%
 # Selecting  numerical columns (binaries excluded)
@@ -256,19 +360,28 @@ plt.show()
 
 
 
-# %% [markdown]
-# The boxplots highlight the extent of skewness and make the outliers stand out clearly, which complements the histogram analysis above.
-# 
-# - Outliers are especially relevant in income and employment duration related-variables, which may need special handling. We'll decide how to handle them further down.
-# 
-# - For demographic/job characteristics (Age, DistanceFromHome, JobLevel, Education) featured the distributions are fairly compact with few outliers, aligning with the unimodal/bell-like shapes seen in histograms.
-# 
-# - Ordinal satisfaction and variables show limited spread, consistent with their discrete scale, with some level of skew toward higher values. Their limited range may reduce their explanatory power.
-# 
-# - PerformanceRating shows very little variation (nearly all values at level 3) confirming its limited usefulness as a predictive feature.
 
 # %% [markdown]
-# Subsequent steps may differ based on the category of each feature. Therefore, we’ll create lists that group feature names by their respective types.
+#  The boxplots highlight the extent of skewness and make the outliers stand out clearly, which complements the histogram analysis above.
+# 
+# 
+# 
+#  - Outliers are especially relevant in income and employment duration related-variables, which may need special handling. We'll decide how to handle them further down.
+# 
+# 
+# 
+#  - For demographic/job characteristics (Age, DistanceFromHome, JobLevel, Education) featured the distributions are fairly compact with few outliers, aligning with the unimodal/bell-like shapes seen in histograms.
+# 
+# 
+# 
+#  - Ordinal satisfaction and variables show limited spread, consistent with their discrete scale, with some level of skew toward higher values. Their limited range may reduce their explanatory power.
+# 
+# 
+# 
+#  - PerformanceRating shows very little variation (nearly all values at level 3) confirming its limited usefulness as a predictive feature.
+
+# %% [markdown]
+#  Subsequent steps may differ based on the category of each feature. Therefore, we’ll create lists that group feature names by their respective types.
 
 # %%
 # Explicitly define groups that cannot be inferred reliably
@@ -310,8 +423,9 @@ feature_groups
 
 
 
+
 # %% [markdown]
-# Let's now look at the distribution of our non-continuous features.
+#  Let's now look at the distribution of our non-continuous features.
 
 # %%
 for feature in feature_groups['non-continuous']:
@@ -334,23 +448,36 @@ for feature in feature_groups['non-continuous']:
 
 
 
-# %% [markdown]
-# From the variables that, a priori, we'd think could be related with attrition, we find that:
-# 
-# - roughly 30% of employees work overtime
-# 
-# - roughly 40% have low to medium levels of satisfaction with the work environment
-# 
-# - roughly 30% report low to medium levels of job involvement
-# 
-# - nearly 40% report low to medium job satisfaction
-# 
-# - another nearly 40% have low to medium levels of satisfaction with relationships at work
-# 
-# - and about 5% report bad work-life balance
 
 # %% [markdown]
-# To better understand what might be contributing to employees’ decisions to quit, we'll next plot the non-continuous features against the target variable. We’ll also measure the attrition rate within each category. This will show us whether some groups are more prone to leaving than others, irrespective of their overall frequency.
+#  From the variables that, a priori, we'd think could be related with attrition, we find that:
+# 
+# 
+# 
+#  - roughly 30% of employees work overtime
+# 
+# 
+# 
+#  - roughly 40% have low to medium levels of satisfaction with the work environment
+# 
+# 
+# 
+#  - roughly 30% report low to medium levels of job involvement
+# 
+# 
+# 
+#  - nearly 40% report low to medium job satisfaction
+# 
+# 
+# 
+#  - another nearly 40% have low to medium levels of satisfaction with relationships at work
+# 
+# 
+# 
+#  - and about 5% report bad work-life balance
+
+# %% [markdown]
+#  To better understand what might be contributing to employees’ decisions to quit, we'll next plot the non-continuous features against the target variable. We’ll also measure the attrition rate within each category. This will show us whether some groups are more prone to leaving than others, irrespective of their overall frequency.
 
 # %%
 for feature in feature_groups['non-continuous']:
@@ -375,37 +502,64 @@ for feature in feature_groups['non-continuous']:
 
 
 
-# %% [markdown]
-# From the plots above we find the following trends:
-# 
-# Department-level & Job roles
-# 
-# - Sales and Human Resources show a higher proportion of employees quitting compared to R&D.
-# 
-# - Within job roles, HR professionals tend to leave more often, but so do Lab Technicians, even though they are part of the R&D department.
-# 
-# - Sales Representatives have the highest attrition rate across all job roles, whereas higher-level roles—such as managers and directors—show very low attrition.
-# 
-#  Personal characteristics
-# 
-# - Single employees appear more likely to quit.
-# 
-# Work conditions and workload
-# 
-# - Employees who work overtime, travel frequently, or have poor work–life balance are more likely to leave.
-# 
-# - Low satisfaction with the work environment, job involvement, overall job satisfaction, and relationships at work is also strongly associated with higher attrition.
-# 
-# Job level and hierarchy
-# 
-# - Employees in lower hierarchical levels tend to leave more often. However, attrition proportions do not strictly follow the hierarchical ranking order.
-# 
-# Stock ownership
-# 
-# - Employees with no stock options (stock option level 0) are more prone to quitting. This is not surprising, as offering stock is a common strategy to increase engagement.
 
 # %% [markdown]
-#    Let's now run an equivalent analysis with our continuous features.
+#  From the plots above we find the following trends:
+# 
+# 
+# 
+#  Department-level & Job roles
+# 
+# 
+# 
+#  - Sales and Human Resources show a higher proportion of employees quitting compared to R&D.
+# 
+# 
+# 
+#  - Within job roles, HR professionals tend to leave more often, but so do Lab Technicians, even though they are part of the R&D department.
+# 
+# 
+# 
+#  - Sales Representatives have the highest attrition rate across all job roles, whereas higher-level roles—such as managers and directors—show very low attrition.
+# 
+# 
+# 
+#   Personal characteristics
+# 
+# 
+# 
+#  - Single employees appear more likely to quit.
+# 
+# 
+# 
+#  Work conditions and workload
+# 
+# 
+# 
+#  - Employees who work overtime, travel frequently, or have poor work–life balance are more likely to leave.
+# 
+# 
+# 
+#  - Low satisfaction with the work environment, job involvement, overall job satisfaction, and relationships at work is also strongly associated with higher attrition.
+# 
+# 
+# 
+#  Job level and hierarchy
+# 
+# 
+# 
+#  - Employees in lower hierarchical levels tend to leave more often. However, attrition proportions do not strictly follow the hierarchical ranking order.
+# 
+# 
+# 
+#  Stock ownership
+# 
+# 
+# 
+#  - Employees with no stock options (stock option level 0) are more prone to quitting. This is not surprising, as offering stock is a common strategy to increase engagement.
+
+# %% [markdown]
+#     Let's now run an equivalent analysis with our continuous features.
 # 
 # 
 # 
@@ -421,7 +575,23 @@ for feature in feature_groups['non-continuous']:
 # 
 # 
 # 
-#    We'll plot both their probability density function and violin plots and assess how their distribution relates to the target.
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#     We'll plot both their probability density function and violin plots and assess how their distribution relates to the target.
 
 # %%
 # Ensure Attrition is binary for plotting aesthetics
@@ -465,46 +635,79 @@ for col in continuous_vars:
 
 
 
-# %% [markdown]
-# Some features show noticeable differences in their distributions depending on whether the employee quit or stayed.
-# 
-# Age and career stage
-# 
-# - Employees who quit tend to be younger.
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# - This aligns with lower values observed in Total Working Years, Years at Company, Years in Current Role, and Years with Current Manager.
-# 
-# Early-career employees may be more inclined to change jobs or roles, contributing to these lower tenure metrics.
-# 
-# Compensation
-# 
-# - Monthly income appears influential: employees with lower income are more likely to leave, which is expected. The same applies to daily rate.
-# 
-# Distance from home
-# 
-# - The larger the distance from home to work, the more likely the employees are to leave.
-# 
-# Other features
-# 
-# - The remaining continuous features either show similar distributions across attrition groups or differences too small to be clearly meaningful.
 
 # %% [markdown]
-#    We’ll now take look at the correlations among the features, including the target variable. This will help us identify potential collinearity, as well as highlight which features are associated with attrition. Since several features are not strictly numeric or continuous, we’ll use Spearman’s correlation, which measures monotonic relationships by correlating feature ranks rather than their raw values.
+#  Some features show noticeable differences in their distributions depending on whether the employee quit or stayed.
+# 
+# 
+# 
+#  Age and career stage
+# 
+# 
+# 
+#  - Employees who quit tend to be younger.
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#  - This aligns with lower values observed in Total Working Years, Years at Company, Years in Current Role, and Years with Current Manager.
+# 
+# 
+# 
+#  Early-career employees may be more inclined to change jobs or roles, contributing to these lower tenure metrics.
+# 
+# 
+# 
+#  Compensation
+# 
+# 
+# 
+#  - Monthly income appears influential: employees with lower income are more likely to leave, which is expected. The same applies to daily rate.
+# 
+# 
+# 
+#  Distance from home
+# 
+# 
+# 
+#  - The larger the distance from home to work, the more likely the employees are to leave.
+# 
+# 
+# 
+#  Other features
+# 
+# 
+# 
+#  - The remaining continuous features either show similar distributions across attrition groups or differences too small to be clearly meaningful.
 
 # %% [markdown]
-#    We'll exclude strictly nominal categorical variables (like Gender, Department, JobRole) because Spearman is rank-based, not meant for unordered categories.
+#     We’ll now take look at the correlations among the features, including the target variable. This will help us identify potential collinearity, as well as highlight which features are associated with attrition. Since several features are not strictly numeric or continuous, we’ll use Spearman’s correlation, which measures monotonic relationships by correlating feature ranks rather than their raw values.
+
+# %% [markdown]
+#     We'll exclude strictly nominal categorical variables (like Gender, Department, JobRole) because Spearman is rank-based, not meant for unordered categories.
 
 # %%
 # Selecting valid variables for Spearman
@@ -523,10 +726,12 @@ df_spearman = df_corr[spearman_vars]
 
 
 
+
 # %%
 # Computing Spearman correlation matrix
 
 spearman_matrix = df_spearman.corr(method="spearman")
+
 
 
 
@@ -539,6 +744,7 @@ attrition_corr = spearman_matrix["Attrition"].drop("Attrition")
 attrition_corr_sorted = attrition_corr.sort_values(ascending=False)
 
 print(attrition_corr_sorted)
+
 
 
 
@@ -559,8 +765,9 @@ plt.show()
 
 
 
+
 # %% [markdown]
-#    From the analyses and visualization above we observe that:
+#     From the analyses and visualization above we observe that:
 # 
 # 
 # 
@@ -576,7 +783,6 @@ plt.show()
 # 
 # 
 # 
-#    - YearsAtCompany, YearsInCurrentRole, YearsWithCurrManager, TotalWorkingYears, JobLevel, MonthlyIncome, StockOptionLevel and Age are the strongest monotonic predictors of Attrition.
 # 
 # 
 # 
@@ -592,8 +798,8 @@ plt.show()
 # 
 # 
 # 
-#    These are indicators that relate to tenure, seniority, and stability and they're in agreement with HR domain knowledge: attrition is highest among newer, younger, lower-level employees.
 # 
+#     - YearsAtCompany, YearsInCurrentRole, YearsWithCurrManager, TotalWorkingYears, JobLevel, MonthlyIncome, StockOptionLevel and Age are the strongest monotonic predictors of Attrition.
 # 
 # 
 # 
@@ -616,7 +822,6 @@ plt.show()
 # 
 # 
 # 
-#    - JobSatisfaction, JobInvolvement, EnvironmentSatisfaction Tshow mild but potentially meaningful associations.
 # 
 # 
 # 
@@ -626,13 +831,95 @@ plt.show()
 # 
 # 
 # 
+#     These are indicators that relate to tenure, seniority, and stability and they're in agreement with HR domain knowledge: attrition is highest among newer, younger, lower-level employees.
 # 
 # 
 # 
 # 
 # 
 # 
-#    Employees with lower satisfaction or lower involvement show slightly higher attrition.
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#     - JobSatisfaction, JobInvolvement, EnvironmentSatisfaction Tshow mild but potentially meaningful associations.
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#     Employees with lower satisfaction or lower involvement show slightly higher attrition.
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
 # 
 # 
 # 
@@ -657,54 +944,95 @@ plt.show()
 
 
 
-# %% [markdown]
-#   The heatmap shows that several of the variables most strongly correlated with attrition are also highly collinear with each other. In particular, the following groups demonstrate very strong monotonic relationships (ρ > 0.70):
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-#   - JobLevel — MonthlyIncome (ρ ≈ 0.92)
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-#   - YearsInCurrentRole — YearsWithCurrManager (ρ ≈ 0.85)
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-#   - TotalWorkingYears — MonthlyIncome (ρ ≈ 0.71)
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-#   These features are all measures of: Tenure, Seniority, Career progression, Employee stability, which explains why they are tightly correlated with each other and with lower attrition.
 
 # %% [markdown]
-#   While colinearity doesn't harm tree-based models, it does affect linear models like linear regression. Besides, it It also leads to unnecessary redundancy in the feature set. Keeping all of them increases the demand for computational powerr and increases the risk of overfitting. By the end of our feature selection process, we should aim to keep at most 2 or 3 representative variables of this set. And for regression models, we'll explicitly remove correlated pairs.
+#    The heatmap shows that several of the variables most strongly correlated with attrition are also highly collinear with each other. In particular, the following groups demonstrate very strong monotonic relationships (ρ > 0.70):
 # 
 # 
 # 
-#   Another way to circumvent colinearity is to combine several colinear raw variables into a single engineered feature. Let's do that below.
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#    - JobLevel — MonthlyIncome (ρ ≈ 0.92)
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#    - YearsInCurrentRole — YearsWithCurrManager (ρ ≈ 0.85)
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#    - TotalWorkingYears — MonthlyIncome (ρ ≈ 0.71)
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#    These features are all measures of: Tenure, Seniority, Career progression, Employee stability, which explains why they are tightly correlated with each other and with lower attrition.
+
+# %% [markdown]
+#    While colinearity doesn't harm tree-based models, it does affect linear models like linear regression. Besides, it It also leads to unnecessary redundancy in the feature set. Keeping all of them increases the demand for computational powerr and increases the risk of overfitting. By the end of our feature selection process, we should aim to keep at most 2 or 3 representative variables of this set. And for regression models, we'll explicitly remove correlated pairs.
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#    Another way to circumvent colinearity is to combine several colinear raw variables into a single engineered feature. Let's do that below.
+# 
+# 
+# 
+# 
 # 
 # 
 # 
 # 
 
 # %% [markdown]
-#   ## Feature Engineering
+#    ## Feature Engineering
 
 # %%
 # TenureIndex (Average of three tenure-related variables)
@@ -747,6 +1075,7 @@ data['Income_Rate_Ratio'] = data['MonthlyIncome'] / data['MonthlyRate']
 
 
 
+
 # %%
 engineered = ["TenureIndex", "PromotionGap", "EngagementIndex", "IncomeVsRoleMedian", "Income_Rate_Ratio"]
 
@@ -760,19 +1089,21 @@ print(spearman_corrs)
 
 
 
+
 # %%
 print(data.shape)
 
 
 
-# %% [markdown]
-#   # Preprocessing Steps
 
 # %% [markdown]
-#   ## Train-Test Split
+#    # Preprocessing Steps
 
 # %% [markdown]
-#   Before any encoding and feature selection steps we'll start by defining x and y, and defining the train–test split. Doing this at this stage is critical to avoid data leakage.
+#    ## Train-Test Split
+
+# %% [markdown]
+#    Before any encoding and feature selection steps we'll start by defining x and y, and defining the train–test split. Doing this at this stage is critical to avoid data leakage.
 
 # %%
 # Separate features and target
@@ -794,8 +1125,9 @@ print(f"Test set size: {X_test.shape[0]} samples")
 
 
 
+
 # %% [markdown]
-#   ## Rebuilding feature groups on X_train
+#    ## Rebuilding feature groups on X_train
 
 # %%
 # 1. Categorical features inferred from dtype 'object'
@@ -824,6 +1156,7 @@ continuous_features = list(
 
 
 
+
 # %%
 print("Categorical nominal:", categorical_features)
 print("Binary:", binary_features)
@@ -833,8 +1166,9 @@ print("Continuous (incl. engineered):", continuous_features)
 
 
 
+
 # %% [markdown]
-#   ## Defining the preprocessing (encoders + passthrough)
+#    ## Defining the preprocessing (encoders + passthrough)
 
 # %%
 # Ordinal encoder for ordinal features
@@ -862,15 +1196,20 @@ preprocess = ColumnTransformer(
 
 
 
-# %% [markdown]
-#   When preprocess.fit(X_train) is called, it learns: category mappings for ordinal features; dummy columns for nominal + binary.
-# 
-# 
-# 
-#   Then preprocess.transform(...) will apply this same mapping to train & test.
 
 # %% [markdown]
-#   ## Combining preprocessing + scaling into a Pipeline
+#    When preprocess.fit(X_train) is called, it learns: category mappings for ordinal features; dummy columns for nominal + binary.
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#    Then preprocess.transform(...) will apply this same mapping to train & test.
+
+# %% [markdown]
+#    ## Combining preprocessing + scaling into a Pipeline
 
 # %%
 pipeline_preprocess = Pipeline([
@@ -881,8 +1220,9 @@ pipeline_preprocess = Pipeline([
 
 
 
+
 # %% [markdown]
-#   ## Fitting preprocessing only on training data and transform both sets
+#    ## Fitting preprocessing only on training data and transform both sets
 
 # %%
 # Fit on training data only (no leakage)
@@ -895,11 +1235,13 @@ X_test_processed  = pipeline_preprocess.transform(X_test)
 
 
 
+
 # %%
 print("X_train_processed shape:", X_train_processed.shape)
 print("X_test_processed shape:",  X_test_processed.shape)
 
 #print("Number of feature names:", len(feature_names))
+
 
 
 
@@ -918,8 +1260,10 @@ X_test_df  = pd.DataFrame(X_test_processed,  columns=feature_names, index=X_test
 
 
 
+
 # %%
 X_train_df.shape
+
 
 
 
@@ -928,11 +1272,12 @@ X_test_df.shape
 
 
 
-# %% [markdown]
-#   # Feature Selection
 
 # %% [markdown]
-#   ## Chi-square
+#    # Feature Selection
+
+# %% [markdown]
+#    ## Chi-square
 
 # %%
 
@@ -966,6 +1311,7 @@ def chi_square_for_features(X_train, y_train, alpha=0.05):
 
 
 
+
 # %%
 chi2_results = chi_square_for_features(
     X_train[non_continuous_features],
@@ -978,8 +1324,9 @@ chi2_results
 
 
 
+
 # %% [markdown]
-#   ## Mutual Information
+#    ## Mutual Information
 
 # %%
 
@@ -1028,6 +1375,7 @@ def compute_mutual_information_from_ct(ct, X_train, y_train):
 
 
 
+
 # %%
 # Get the fitted ColumnTransformer from the pipeline
 ct = pipeline_preprocess.named_steps['preprocess']
@@ -1038,8 +1386,9 @@ display(mi_results.head(20))
 
 
 
+
 # %% [markdown]
-#   ## L1 Logistic Regression (LASSO)
+#    ## L1 Logistic Regression (LASSO)
 
 # %%
 
@@ -1085,14 +1434,15 @@ display(l1_results.head(20))
 
 
 
-# %% [markdown]
-#   Features with Selected = True are part of the sparse LASSO-selected subset. Larger coefficients (in magnitude) reflect stronger linear effect.
 
 # %% [markdown]
-#   ## Random Forest Classifier
+#    Features with Selected = True are part of the sparse LASSO-selected subset. Larger coefficients (in magnitude) reflect stronger linear effect.
 
 # %% [markdown]
-#   Random Forest captures: nonlinearities, interactions, categorical effects, monotonic or non-monotonic patterns. Works very well alongside LASSO.
+#    ## Random Forest Classifier
+
+# %% [markdown]
+#    Random Forest captures: nonlinearities, interactions, categorical effects, monotonic or non-monotonic patterns. Works very well alongside LASSO.
 
 # %%
 
@@ -1126,11 +1476,12 @@ display(rf_results.head(20))
 
 
 
-# %% [markdown]
-#   ## XGBoost Feature Importance
 
 # %% [markdown]
-#   XGBoost is often very strong at discovering: threshold effects, feature interactions, nonlinear jump patterns, sparse informative features.
+#    ## XGBoost Feature Importance
+
+# %% [markdown]
+#    XGBoost is often very strong at discovering: threshold effects, feature interactions, nonlinear jump patterns, sparse informative features.
 
 # %%
 
@@ -1167,8 +1518,9 @@ display(xgb_results.head(20))
 
 
 
+
 # %% [markdown]
-#  ## Table Combining Feature Selection Results
+#   ## Table Combining Feature Selection Results
 
 # %%
 #Starting from all encoded features
@@ -1224,6 +1576,7 @@ unified_fs = unified_fs.merge(
 
 
 
+
 # %%
 # Mapping encoded features back to their raw feature name
 
@@ -1255,6 +1608,7 @@ unified_fs["raw_feature"] = unified_fs["Feature"].apply(get_raw_feature_name)
 
 
 
+
 # %%
 # Merging Chi-square results by raw feature
 
@@ -1270,6 +1624,7 @@ unified_fs = unified_fs.merge(
     on="raw_feature",
     how="left"
 )
+
 
 
 
@@ -1290,8 +1645,9 @@ unified_fs_sorted.head(30)
 
 
 
+
 # %% [markdown]
-#  ## Finding which variables are consistently selected by the different feature selection methods
+#   ## Finding which variables are consistently selected by the different feature selection methods
 
 # %%
 df = unified_fs.copy()  # keeping the original safe
@@ -1310,8 +1666,9 @@ df["Selected"] = df["Selected"].fillna(False)
 
 
 
+
 # %% [markdown]
-#  Establishing dynamic thresholds (quantile-based)
+#   Establishing dynamic thresholds (quantile-based)
 
 # %%
 # Helper to get a quantile threshold, but avoid NaNs / all-zeros issues
@@ -1333,8 +1690,9 @@ print("XGB threshold:", xgb_thresh)
 
 
 
+
 # %% [markdown]
-#  Defining binary flags
+#   Defining binary flags
 
 # %%
 # 1) Chi-square (categoricals only) – already a boolean
@@ -1355,8 +1713,9 @@ df["xgb_good"] = (df["XGB_importance"] >= xgb_thresh)
 
 
 
+
 # %% [markdown]
-#  Building the consensus score
+#   Building the consensus score
 
 # %%
 method_flags = ["chi2_good", "mi_good", "l1_good", "rf_good", "xgb_good"]
@@ -1370,8 +1729,9 @@ print(df["consensus_score"].value_counts().sort_index())
 
 
 
+
 # %% [markdown]
-#  Defining Feature Set A (strict) and Feature Set B (moderate)
+#   Defining Feature Set A (strict) and Feature Set B (moderate)
 
 # %%
 # Strict: features that get at least 3 "votes"
@@ -1386,6 +1746,7 @@ features_moderate = df.loc[moderate_mask, "Feature"].tolist()
 
 print("Number of features in strict set:", len(features_strict))
 print("Number of features in moderate set:", len(features_moderate))
+
 
 
 
@@ -1413,6 +1774,7 @@ df_consensus_view.head(30)
 
 
 
+
 # %%
 # Strict set of features
 
@@ -1421,28 +1783,49 @@ for i, f in enumerate(features_strict, 1):
 
 
 
+
 # %% [markdown]
-#  This strict set leans heavily toward a few thematic clusters:
+#   This strict set leans heavily toward a few thematic clusters:
 # 
 # 
 # 
-#  - Career progression & seniority (Age, TotalWorkingYears, YearsAtCompany, YearsWithCurrManager, JobLevel)
-# 
-#  - Income & compensation (MonthlyIncome, Income_Rate_Ratio, StockOptionLevel)
-# 
-#  - Job role (4–5 JobRole dummies)
-# 
-#  - Marital status (Single / Divorced)
-# 
-#  - OverTime
-# 
-#  - EngagementIndex
-# 
-#  - BusinessTravel
 # 
 # 
 # 
-#  These are well known drivers of attrition.
+# 
+#   - Career progression & seniority (Age, TotalWorkingYears, YearsAtCompany, YearsWithCurrManager, JobLevel)
+# 
+# 
+# 
+#   - Income & compensation (MonthlyIncome, Income_Rate_Ratio, StockOptionLevel)
+# 
+# 
+# 
+#   - Job role (4–5 JobRole dummies)
+# 
+# 
+# 
+#   - Marital status (Single / Divorced)
+# 
+# 
+# 
+#   - OverTime
+# 
+# 
+# 
+#   - EngagementIndex
+# 
+# 
+# 
+#   - BusinessTravel
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#   These are well known drivers of attrition.
 
 # %%
 # Modearate set of features
@@ -1452,32 +1835,51 @@ for i, f in enumerate(features_moderate, 1):
 
 
 
-# %% [markdown]
-#  The moderate feature set as expected is more comprehensive and could be particularly useful for tree-based models. Of note, all engineered features are included in this set.
 
 # %% [markdown]
-#   # Modelling
+#   The moderate feature set as expected is more comprehensive and could be particularly useful for tree-based models. Of note, all engineered features are included in this set.
 
 # %% [markdown]
-#  The following modelling function:
+#    # Modelling
+
+# %% [markdown]
+#   The following modelling function:
 # 
 # 
 # 
-#  - accepts a feature list (strict or moderate)
-# 
-#  - uses the pipeline_preprocess for encoding & scaling
-# 
-#  - runs cross-validation on the training set
-# 
-#  - evaluates several metrics
-# 
-#  - trains the final model on the full training set
-# 
-#  - evaluates it on the held-out test set
 # 
 # 
 # 
-#  This will be the function we'll reuse for comparing different models as well as strict feature set vs moderate feature set.
+# 
+#   - accepts a feature list (strict or moderate)
+# 
+# 
+# 
+#   - uses the pipeline_preprocess for encoding & scaling
+# 
+# 
+# 
+#   - runs cross-validation on the training set
+# 
+# 
+# 
+#   - evaluates several metrics
+# 
+# 
+# 
+#   - trains the final model on the full training set
+# 
+# 
+# 
+#   - evaluates it on the held-out test set
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+#   This will be the function we'll reuse for comparing different models as well as strict feature set vs moderate feature set.
 
 # %%
 def evaluate_model_preprocessed(
@@ -1538,6 +1940,7 @@ def evaluate_model_preprocessed(
     }
 
     return results
+
 
 
 
@@ -1627,6 +2030,7 @@ def make_cat():
 
 
 
+
 # %%
 # Fit pipeline once to extract transformed feature names
 pipeline_preprocess.fit(X_train)
@@ -1647,6 +2051,7 @@ feature_sets = {
     "moderate": features_moderate,
     "all_feats":  all_features
 }
+
 
 
 
@@ -1690,22 +2095,31 @@ results_df
 
 
 
-# %% [markdown]
-# Based on the baseline results, XGBoost paired with the moderate feature set provides one of the most favourable trade-offs across all evaluation metrics. This makes it our best candidate for further optimisation, so we will focus our hyperparameter tuning (using GridSearch and Optuna) on this configuration.
 
 # %% [markdown]
-# ## Hyperparameter tuning using Grid Search
+#  Based on the baseline results, XGBoost paired with the moderate feature set provides one of the most favourable trade-offs across all evaluation metrics. This makes it our best candidate for further optimisation, so we will focus our hyperparameter tuning (using GridSearch and Optuna) on this configuration.
 
 # %% [markdown]
-# We'll reuse our evaluate_model_preprocessed while looping over a small grid to assess:
+#  ## Hyperparameter tuning using Grid Search
+
+# %% [markdown]
+#  We'll reuse our evaluate_model_preprocessed while looping over a small grid to assess:
 # 
-# - which max_depth generally works best
 # 
-# - whether smaller/larger learning_rate helps
 # 
-# - whether more trees improve things
+#  - which max_depth generally works best
 # 
-# - whether subsampling is beneficial
+# 
+# 
+#  - whether smaller/larger learning_rate helps
+# 
+# 
+# 
+#  - whether more trees improve things
+# 
+# 
+# 
+#  - whether subsampling is beneficial
 
 # %%
 # helper to compute imbalance weight
@@ -1775,14 +2189,15 @@ grid_df_sorted = grid_df.sort_values(
 grid_df_sorted.head(10)
 
 
-# %% [markdown]
-# By performing grid search we obtained modest but consistent improvements over the baseline XGBoost model in cross-validation performance, particularly in precision and F1. Test-set results remain close to the baseline, indicating that the model is stable and not highly sensitive to the grid’s parameter variations. These results justify trying Optuna in order to explore the hyperparameter space more efficiently.
 
 # %% [markdown]
-# ## Hyperparameter tuning using Optuna 
+#  By performing grid search we obtained modest but consistent improvements over the baseline XGBoost model in cross-validation performance, particularly in precision and F1. Test-set results remain close to the baseline, indicating that the model is stable and not highly sensitive to the grid’s parameter variations. These results justify trying Optuna in order to explore the hyperparameter space more efficiently.
 
 # %% [markdown]
-# We define our Optuna search space based on the information we obtained from the (coarse) grid search above
+#  ## Hyperparameter tuning using Optuna
+
+# %% [markdown]
+#  We define our Optuna search space based on the information we obtained from the (coarse) grid search above
 
 # %%
 def xgb_optuna_objective(trial):
@@ -1864,6 +2279,7 @@ for k, v in study.best_trial.params.items():
     print(f"  {k}: {v}")
 
 
+
 # %%
 best_params = study.best_trial.params
 spw = compute_spw(y_train)
@@ -1888,15 +2304,17 @@ optuna_best_results = evaluate_model_preprocessed(
 optuna_best_results
 
 
-# %% [markdown]
-# Tining with Optuna didn’t beat the baseline - test_f1 Optuna 0.477 vs test_f1 base model 0.489
-# After tuning XGBoost with 2 different approached, we conclude that the baseline configuration was already near the performance ceiling for this dataset; additional tuning brought only marginal changes in test F1.
 
 # %% [markdown]
-# ## Model Evaluation
+#  Tining with Optuna didn’t beat the baseline - test_f1 Optuna 0.477 vs test_f1 base model 0.489
+# 
+#  After tuning XGBoost with 2 different approached, we conclude that the baseline configuration was already near the performance ceiling for this dataset; additional tuning brought only marginal changes in test F1.
 
 # %% [markdown]
-# For model evaluation we'll use our XGB base model.
+#  ## Model Evaluation
+
+# %% [markdown]
+#  For model evaluation we'll use our XGB base model.
 
 # %%
 # Final model to be used in evaluation curves
@@ -1921,6 +2339,7 @@ def make_final_xgb_baseline():
 model = make_final_xgb_baseline()
 
 
+
 # %%
 def preprocess_and_select(X, pipeline_preprocess, feature_list, fit=False):
     """
@@ -1938,6 +2357,7 @@ def preprocess_and_select(X, pipeline_preprocess, feature_list, fit=False):
     
     return X_prep[:, idx], pipeline_preprocess
 
+
 # %%
 # preprocess full train and test (for evaluation curves)
 X_train_sel, pp_fitted = preprocess_and_select(
@@ -1952,6 +2372,7 @@ model.fit(X_train_sel, y_train)
 
 # predicted probabilities
 test_proba = model.predict_proba(X_test_sel)[:, 1]
+
 
 # %%
 # ROC Curve
@@ -1970,12 +2391,17 @@ plt.grid()
 plt.show()
 
 
+
 # %% [markdown]
-# The XGBoost model achieves a ROC-AUC of 0.775, indicating good ability to discriminate between employees who leave and those who stay. The curve rises steeply at low false-positive rates, showing that the model correctly identifies many true quitters before confusing them with non-quitters.
+#  The XGBoost model achieves a ROC-AUC of 0.775, indicating good ability to discriminate between employees who leave and those who stay. The curve rises steeply at low false-positive rates, showing that the model correctly identifies many true quitters before confusing them with non-quitters.
 # 
-# However, ROC-AUC evaluates performance across all possible thresholds and is insensitive to class imbalance. In an attrition scenario where only ~15% of employees leave, a model can obtain a relatively high ROC-AUC even when the practical precision and recall trade-off is challenging.
 # 
-# Therefore, while the ROC curve confirms that the model produces a meaningful ranking of risk scores, it must be interpreted alongside the Precision–Recall curve and F1 score to fully understand real-world classification performance under imbalance.
+# 
+#  However, ROC-AUC evaluates performance across all possible thresholds and is insensitive to class imbalance. In an attrition scenario where only ~15% of employees leave, a model can obtain a relatively high ROC-AUC even when the practical precision and recall trade-off is challenging.
+# 
+# 
+# 
+#  Therefore, while the ROC curve confirms that the model produces a meaningful ranking of risk scores, it must be interpreted alongside the Precision–Recall curve and F1 score to fully understand real-world classification performance under imbalance.
 
 # %%
 # Precision-Recall Curve
@@ -1993,10 +2419,13 @@ plt.grid()
 plt.show()
 
 
+
 # %% [markdown]
-# The Precision–Recall curve provides a more realistic evaluation of model performance under class imbalance than ROC-AUC. The model achieves an Average Precision (AP) of 0.53, substantially higher than the baseline positive rate of ~0.15, confirming that it captures meaningful signal related to employee attrition. Precision is extremely high at low recall (0.85–1.00), indicating that the model is very confident in identifying the top-risk employees. As recall increases, precision decreases, reflecting a typical precision–recall tradeoff in imbalanced datasets, where achieving high recall requires accepting more false positives. These results align with the observed F1 scores (0.45–0.49), confirming that the model captures meaningful signal but cannot achieve high precision and recall simultaneously.
+#  The Precision–Recall curve provides a more realistic evaluation of model performance under class imbalance than ROC-AUC. The model achieves an Average Precision (AP) of 0.53, substantially higher than the baseline positive rate of ~0.15, confirming that it captures meaningful signal related to employee attrition. Precision is extremely high at low recall (0.85–1.00), indicating that the model is very confident in identifying the top-risk employees. As recall increases, precision decreases, reflecting a typical precision–recall tradeoff in imbalanced datasets, where achieving high recall requires accepting more false positives. These results align with the observed F1 scores (0.45–0.49), confirming that the model captures meaningful signal but cannot achieve high precision and recall simultaneously.
 # 
-# Although the model ranks employees well (as shown by the ROC curve), achieving strong precision and recall simultaneously is challenging due to the underlying class imbalance. The PR curve therefore offers a realistic assessment of actionable performance and complements the ROC curve by showing where the model can be most effectively used.
+# 
+# 
+#  Although the model ranks employees well (as shown by the ROC curve), achieving strong precision and recall simultaneously is challenging due to the underlying class imbalance. The PR curve therefore offers a realistic assessment of actionable performance and complements the ROC curve by showing where the model can be most effectively used.
 
 # %%
 # Threshold vs F1 Score
@@ -2025,20 +2454,27 @@ plt.title("Threshold vs F1")
 plt.grid()
 plt.show()
 
-# %% [markdown]
-# The Threshold–F1 curve illustrates how the model’s F1 score changes as the decision threshold varies between 0 and 1. The model achieves its highest F1 values—peaking just above 0.50, which is when the threshold is in the 0.30 to 0.45 range. This means that, on the test set, lowering the threshold below the default 0.50 improves the balance between precision and recall.
-# 
-# However, this peak reflects test-set behavior and should not be used for model selection, as tuning a threshold on test data introduces data leakage. 
-# 
-# Overall, the curve highlights how sensitive F1 performance is to threshold choice, especially in imbalanced datasets, and reinforces the importance of selecting thresholds based on training-only validation procedures rather than test-set optimization.
 
 # %% [markdown]
-# ## Threshold Optimization
+#  The Threshold–F1 curve illustrates how the model’s F1 score changes as the decision threshold varies between 0 and 1. The model achieves its highest F1 values—peaking just above 0.50, which is when the threshold is in the 0.30 to 0.45 range. This means that, on the test set, lowering the threshold below the default 0.50 improves the balance between precision and recall.
+# 
+# 
+# 
+#  However, this peak reflects test-set behavior and should not be used for model selection, as tuning a threshold on test data introduces data leakage.
+# 
+# 
+# 
+#  Overall, the curve highlights how sensitive F1 performance is to threshold choice, especially in imbalanced datasets, and reinforces the importance of selecting thresholds based on training-only validation procedures rather than test-set optimization.
 
 # %% [markdown]
-# The Threshold–F1 curve above shows that the model’s performance varies substantially across different probability cutoffs. Although the default threshold of 0.50 is commonly used, it is not the point that maximizes the F1 score on this dataset. This variation suggests that adjusting the classification threshold could meaningfully improve the balance between precision and recall.
+#  ## Threshold Optimization
+
+# %% [markdown]
+#  The Threshold–F1 curve above shows that the model’s performance varies substantially across different probability cutoffs. Although the default threshold of 0.50 is commonly used, it is not the point that maximizes the F1 score on this dataset. This variation suggests that adjusting the classification threshold could meaningfully improve the balance between precision and recall.
 # 
-# Therefore, in the next section, we perform a dedicated threshold optimization procedure using using validation performed only on the training data (avoiding leakage) in an attempt identify a more effective decision threshold for this model.
+# 
+# 
+#  Therefore, in the next section, we perform a dedicated threshold optimization procedure using using validation performed only on the training data (avoiding leakage) in an attempt identify a more effective decision threshold for this model.
 
 # %%
 def find_best_threshold(
@@ -2102,6 +2538,7 @@ def find_best_threshold(
     return best_thr, thr_df
 
 
+
 # %%
 best_thr, thr_df = find_best_threshold(
     model=make_final_xgb_baseline(),
@@ -2110,6 +2547,7 @@ best_thr, thr_df = find_best_threshold(
     y_train=y_train,
     pipeline_preprocess=pipeline_preprocess
 )
+
 
 
 # %%
@@ -2151,6 +2589,7 @@ def evaluate_with_threshold(
     }
 
 
+
 # %%
 # Evaluate on test with tuned threshold
 
@@ -2168,8 +2607,9 @@ threshold_results = evaluate_with_threshold(
 threshold_results
 
 
+
 # %% [markdown]
-# Although the single validation split suggested an optimal threshold of approximately 0.55, applying this threshold to the test set reduced the F1 score to 0.41, which is worse than the baseline model’s performance using the default 0.50 threshold. This indicates that the threshold estimate obtained from a single split may not be stable. To address this, we'll repeat the threshold-optimization procedure using stratified K-fold cross-validation, which provides a more robust and reliable threshold by averaging performance across multiple folds of the training data.
+#  Although the single validation split suggested an optimal threshold of approximately 0.55, applying this threshold to the test set reduced the F1 score to 0.41, which is worse than the baseline model’s performance using the default 0.50 threshold. This indicates that the threshold estimate obtained from a single split may not be stable. To address this, we'll repeat the threshold-optimization procedure using stratified K-fold cross-validation, which provides a more robust and reliable threshold by averaging performance across multiple folds of the training data.
 
 # %%
 from sklearn.model_selection import StratifiedKFold
@@ -2222,6 +2662,7 @@ def get_oof_proba_cv(
     return oof_proba
 
 
+
 # %%
 
 
@@ -2233,6 +2674,7 @@ oof_proba = get_oof_proba_cv(
     pipeline_preprocess=pipeline_preprocess,
     n_splits=5
 )
+
 
 
 # %%
@@ -2256,8 +2698,10 @@ def tune_threshold_from_oof(y_true, proba, thresholds=None):
     return best_row["threshold"], thr_df
 
 
+
 # %%
 best_thr_cv, thr_df_cv = tune_threshold_from_oof(y_train, oof_proba)
+
 
 
 # %%
@@ -2273,8 +2717,9 @@ threshold_results_cv = evaluate_with_threshold(
 threshold_results_cv
 
 
+
 # %% [markdown]
-# Using stratified K-fold cross-validation, the threshold-optimization procedure produced a more stable estimate, again identifying a threshold close to 0.55. When this cross-validated threshold was applied to the test set, the model achieved an F1 score of 0.434, which is slightly better than the single-split approach but still below the baseline F1 obtained with the default 0.50 threshold. This confirms that, for this dataset, adjusting the decision threshold does not yield a consistent improvement over the baseline setting.
+#  Using stratified K-fold cross-validation, the threshold-optimization procedure produced a more stable estimate, again identifying a threshold close to 0.55. When this cross-validated threshold was applied to the test set, the model achieved an F1 score of 0.434, which is slightly better than the single-split approach but still below the baseline F1 obtained with the default 0.50 threshold. This confirms that, for this dataset, adjusting the decision threshold does not yield a consistent improvement over the baseline setting.
 
 # %%
 from sklearn.metrics import (
@@ -2308,6 +2753,7 @@ print("Final Classification Metrics (threshold = {})".format(final_threshold))
 metrics_table
 
 
+
 # %%
 # Confusion matrix
 cm = confusion_matrix(y_test, y_pred)
@@ -2321,31 +2767,19 @@ cm_df = pd.DataFrame(
 print("Confusion Matrix (threshold = {})".format(final_threshold))
 cm_df
 
+
 # %% [markdown]
-# Teste Pedro - threshold optimization from the f1 / threshold curve
-
-# Although the baseline model used a default threshold of 0.50, our earlier analysis of the Threshold–F1 curve indicated that a lower threshold of approximately 0.38 maximizes the F1 score on the test set. By adopting this optimized threshold, we can potentially improve the balance between precision and recall, leading to better overall classification performance in identifying employees at risk of attrition.
-
-# Our final threshold (from baseline model)
-test_threshold = 0.3802
-
-# Generate final predictions 
-y_pred = (test_proba >= test_threshold).astype(int)
-
-# Computing metrics 
-test_accuracy  = accuracy_score(y_test, y_pred)
-test_precision = precision_score(y_test, y_pred, zero_division=0)
-test_recall    = recall_score(y_test, y_pred)
-test_f1        = f1_score(y_test, y_pred)
-
-# Building a metrics table 
-metrics_table = pd.DataFrame({
-    "Metric": ["Accuracy", "Precision", "Recall", "F1"],
-    "Score": [test_accuracy, test_precision, test_recall, test_f1]
-})
-
-print("Final Classification Metrics (threshold = {})".format(test_threshold))
-metrics_table# %%
+#  Teste Pedro - threshold optimization from the f1 / threshold curve
+# 
+#  Although the baseline model used a default threshold of 0.50, our earlier analysis of the Threshold–F1 curve indicated that a lower threshold of approximately 0.38 maximizes the F1 score on the test set. By adopting this optimized threshold, we can potentially improve the balance between precision and recall, leading to better overall classification performance in identifying employees at risk of attrition.
+# 
+#  Our final threshold (from baseline model)
+# 
+#  Generate final predictions
+# 
+#  Computing metrics
+# 
+#  Building a metrics table
 
 # %%
 # Confusion matrix Teste Pedro
@@ -2361,3 +2795,487 @@ print("Confusion Matrix (threshold = {})".format(test_threshold))
 cm_df
 
 # We can see that by lowering the threshold to 0.38, the model identifies more true positives (employees who leave) at the cost of increasing false positives (employees incorrectly predicted to leave). This trade-off is reflected in the updated precision and recall scores, which should be carefully considered based on the organization's priorities regarding attrition management.
+
+
+# %% [markdown]
+# # Model Explainability
+
+# %% [markdown]
+# ## SHAP Analysis
+
+# %% [markdown]
+# Compute SHAP values (TreeExplainer)
+
+# %%
+# X_train_sel: already computed earlier with features_moderate and fit=True
+# model: already trained on X_train_sel
+
+X_for_shap = X_train_sel
+
+import numpy as np
+import shap
+shap.initjs()
+
+shap_sample_size = 300
+if X_for_shap.shape[0] > shap_sample_size:
+    rng = np.random.RandomState(42)
+    sample_idx = rng.choice(
+        X_for_shap.shape[0],
+        size=shap_sample_size,
+        replace=False
+    )
+    X_shap = X_for_shap[sample_idx]
+else:
+    X_shap = X_for_shap
+
+explainer = shap.TreeExplainer(model)
+shap_values = explainer.shap_values(X_shap)
+
+
+# %% [markdown]
+# ## Global SHAP plots
+
+# %% [markdown]
+# Bar plot: feature importance ranking
+
+# %%
+shap.summary_plot(
+    shap_values,
+    X_shap,
+    feature_names=features_moderate,
+    plot_type="bar"
+)
+
+
+
+# %% [markdown]
+# Beeswarm: direction + magnitude
+
+# %%
+shap.summary_plot(
+    shap_values,
+    X_shap,
+    feature_names=features_moderate
+)
+
+# %%
+import pandas as pd
+import shap
+
+# If X_shap is numpy, wrap it for readability
+X_shap_df = pd.DataFrame(X_shap, columns=features_moderate)
+
+# --- 1) Engagement vs SHAP, colored by Overtime ---
+shap.dependence_plot(
+    "num__EngagementIndex",
+    shap_values,
+    X_shap_df,
+    interaction_index="nom__OverTime_0"   # colour by overtime
+)
+
+# --- 2) MonthlyIncome vs SHAP, colored by IncomeVsRoleMedian ---
+shap.dependence_plot(
+    "num__MonthlyIncome",
+    shap_values,
+    X_shap_df,
+    interaction_index="num__IncomeVsRoleMedian"
+)
+
+# --- 3) Age vs SHAP, colored by TenureIndex ---
+shap.dependence_plot(
+    "num__Age",
+    shap_values,
+    X_shap_df,
+    interaction_index="num__TenureIndex"
+)
+
+# --- 4) PromotionGap vs SHAP, colored by EngagementIndex ---
+shap.dependence_plot(
+    "num__PromotionGap",
+    shap_values,
+    X_shap_df,
+    interaction_index="num__EngagementIndex"
+)
+
+
+# %%
+import numpy as np
+
+# If shap_values is a list (old SHAP versions), take the positive class
+if isinstance(shap_values, list):
+    sv = shap_values[1]
+else:
+    sv = shap_values  # (n_samples, n_features)
+
+# total contribution toward attrition risk (positive class)
+total_shap = sv.sum(axis=1)
+
+# Top-k highest risk explanations (largest positive SHAP sums)
+k = 5
+top_pos_idx = np.argsort(total_shap)[-k:][::-1]
+
+# Top-k lowest risk explanations (most negative SHAP sums)
+top_neg_idx = np.argsort(total_shap)[:k]
+
+print("Top high-risk examples (by SHAP):", top_pos_idx)
+print("Top low-risk examples (by SHAP):", top_neg_idx)
+
+
+# %%
+def shap_example_df(idx):
+    return pd.DataFrame({
+        "feature": features_moderate,
+        "value": X_shap_df.iloc[idx].values,
+        "shap_value": sv[idx]
+    }).sort_values("shap_value", ascending=False)
+
+# Example: inspect the most at-risk employee
+high_risk_example = shap_example_df(top_pos_idx[0])
+low_risk_example  = shap_example_df(top_neg_idx[0])
+
+high_risk_example.head(10)  # top 10 contributors for high-risk case
+#low_risk_example.head(10)   # top 10 contributors for low-risk case
+
+
+# %%
+# High-risk case
+shap.force_plot(
+    explainer.expected_value,
+    sv[top_pos_idx[0], :],
+    X_shap_df.iloc[top_pos_idx[0], :],
+    feature_names=features_moderate
+)
+
+# Low-risk case
+shap.force_plot(
+    explainer.expected_value,
+    sv[top_neg_idx[0], :],
+    X_shap_df.iloc[top_neg_idx[0], :],
+    feature_names=features_moderate
+)
+
+
+# %% [markdown]
+# # SVM hyperparameter tuning using randomized search
+
+# %%
+from sklearn.svm import SVC
+from sklearn.model_selection import StratifiedKFold, RandomizedSearchCV
+from sklearn.metrics import f1_score
+import numpy as np
+
+RANDOM_STATE = 42  # keep it consistent
+
+def tune_svc_random_search(
+    feature_list,
+    X_train, y_train,
+    pipeline_preprocess,
+    n_splits=5,
+    n_iter=40
+):
+    """
+    Tune an SVC on the selected features using RandomizedSearchCV.
+    Returns (best_estimator, search_object).
+    """
+
+    # ----- 1. Preprocess + select features (same logic as evaluate_model_preprocessed) -----
+    pipeline_preprocess.fit(X_train)
+    X_train_prep = pipeline_preprocess.transform(X_train)
+
+    feature_names = pipeline_preprocess.get_feature_names_out()
+    name_to_idx = {name: i for i, name in enumerate(feature_names)}
+    idx = [name_to_idx[f] for f in feature_list]
+    X_train_sel = X_train_prep[:, idx]
+
+    # ----- 2. Base SVC model -----
+    base_svc = SVC(
+        kernel='rbf',
+        probability=True,
+        class_weight='balanced',
+        random_state=RANDOM_STATE
+    )
+
+    # ----- 3. Search space -----
+    param_dist = {
+        "C":     np.logspace(-2, 3, 30),   # 0.01 → 1000
+        "gamma": np.logspace(-4, 1, 30),   # 1e-4 → 10
+        "kernel": ["rbf"]                  # you can add 'linear' if you want
+    }
+
+    cv = StratifiedKFold(
+        n_splits=n_splits,
+        shuffle=True,
+        random_state=RANDOM_STATE
+    )
+
+    search = RandomizedSearchCV(
+        estimator=base_svc,
+        param_distributions=param_dist,
+        n_iter=n_iter,
+        scoring="f1",          # aligns with your cv_f1 metric
+        cv=cv,
+        n_jobs=-1,
+        verbose=1,
+        random_state=RANDOM_STATE,
+        refit=True             # refit on full training set with best params
+    )
+
+    # ----- 4. Run search -----
+    search.fit(X_train_sel, y_train)
+
+    print("Best params:", search.best_params_)
+    print("Best CV F1 (RandomizedSearchCV):", search.best_score_)
+
+    best_svc = search.best_estimator_
+    return best_svc, search
+
+
+# %%
+# choose feature set to tune on
+svc_features = features_strict   # or features_moderate / all_features
+
+best_svc, svc_search = tune_svc_random_search(
+    feature_list=svc_features,
+    X_train=X_train,
+    y_train=y_train,
+    pipeline_preprocess=pipeline_preprocess,
+    n_splits=5,
+    n_iter=40
+)
+
+
+# %%
+svc_tuned_results = evaluate_model_preprocessed(
+    model=best_svc,
+    feature_list=svc_features,
+    X_train=X_train, y_train=y_train,
+    X_test=X_test,   y_test=y_test,
+    pipeline_preprocess=pipeline_preprocess
+)
+
+svc_tuned_results["model"] = "SVC_tuned"
+svc_tuned_results["feature_set"] = "strict"   # or whatever you used
+
+pd.DataFrame([svc_tuned_results])
+
+
+# %% [markdown]
+# # SVM hyperparameter tuning using grid search
+
+# %%
+import numpy as np
+from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV, StratifiedKFold
+
+best_C = 8.531678524172815
+best_gamma = 0.011721022975334805
+
+# helper: create log-spaced values around a center (factor ≈ 2 range)
+def local_log_grid(center, log_half_width=0.3, n=5):
+    """
+    center: positive float
+    log_half_width: how far (in log10 space) to go on each side
+                    0.3 ≈ factor of 2 range (10^0.3 ≈ 2)
+    n: number of points
+    """
+    log_c = np.log10(center)
+    return np.logspace(log_c - log_half_width, log_c + log_half_width, n)
+
+C_grid = local_log_grid(best_C, log_half_width=0.3, n=5)
+gamma_grid = local_log_grid(best_gamma, log_half_width=0.3, n=5)
+
+print("C_grid:", C_grid)
+print("gamma_grid:", gamma_grid)
+
+param_grid = {
+    "C": C_grid,
+    "gamma": gamma_grid,
+    "kernel": ["rbf"]
+}
+
+
+# %%
+# ----- preprocess + select the same feature set you tuned on with random search -----
+pipeline_preprocess.fit(X_train)
+X_train_prep = pipeline_preprocess.transform(X_train)
+
+feature_names = pipeline_preprocess.get_feature_names_out()
+name_to_idx = {name: i for i, name in enumerate(feature_names)}
+idx = [name_to_idx[f] for f in features_strict]   # or strict/all_feats
+X_train_sel = X_train_prep[:, idx]
+
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+svc_base = SVC(
+    probability=True,
+    class_weight="balanced",
+    random_state=42
+)
+
+grid_search = GridSearchCV(
+    estimator=svc_base,
+    param_grid=param_grid,
+    scoring="f1",      # metric I care about
+    cv=cv,
+    n_jobs=-1,
+    verbose=1,
+    refit=True
+)
+
+grid_search.fit(X_train_sel, y_train)
+
+print("Best params (local grid):", grid_search.best_params_)
+print("Best CV F1 (local grid):", grid_search.best_score_)
+
+best_svc_local = grid_search.best_estimator_
+
+
+# %%
+svc_local_results = evaluate_model_preprocessed(
+    model=best_svc_local,
+    feature_list=features_strict,      # or whichever I want to test
+    X_train=X_train, y_train=y_train,
+    X_test=X_test,   y_test=y_test,
+    pipeline_preprocess=pipeline_preprocess
+)
+
+svc_local_results["model"] = "SVC_tuned_local"
+svc_local_results["feature_set"] = "strict"
+
+pd.DataFrame([svc_local_results])
+
+
+# %% [markdown]
+# # SVM Threshold Optimization
+
+# %%
+import numpy as np
+import pandas as pd
+
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.metrics import f1_score
+from sklearn.base import clone
+
+RANDOM_STATE = 42
+
+def optimize_threshold_repeated_cv(
+    base_model,
+    feature_list,
+    X_train, y_train,
+    pipeline_preprocess,
+    n_splits=5,
+    n_repeats=5,
+    thresholds=None
+):
+    """
+    Returns:
+        best_thr: float
+        best_f1:  float (CV estimate at best_thr)
+        thr_df:   DataFrame with (threshold, f1)
+    """
+
+    if thresholds is None:
+        thresholds = np.linspace(0.1, 0.9, 81)  # 0.01 step
+
+    # ----- 1. Preprocess + select features (same style as your other code) -----
+    pipeline_preprocess.fit(X_train)
+    X_prep = pipeline_preprocess.transform(X_train)
+
+    feature_names = pipeline_preprocess.get_feature_names_out()
+    name_to_idx = {name: i for i, name in enumerate(feature_names)}
+    idx = [name_to_idx[f] for f in feature_list]
+    X_sel = X_prep[:, idx]
+
+    # ----- 2. Repeated stratified CV -----
+    rskf = RepeatedStratifiedKFold(
+        n_splits=n_splits,
+        n_repeats=n_repeats,
+        random_state=RANDOM_STATE
+    )
+
+    all_probas = []
+    all_y = []
+
+    for tr_idx, val_idx in rskf.split(X_sel, y_train):
+        X_tr, X_val = X_sel[tr_idx], X_sel[val_idx]
+        y_tr, y_val = y_train.iloc[tr_idx], y_train.iloc[val_idx]
+
+        model = clone(base_model)
+        model.fit(X_tr, y_tr)
+
+        proba = model.predict_proba(X_val)[:, 1]
+        all_probas.append(proba)
+        all_y.append(y_val.values)
+
+    all_probas = np.concatenate(all_probas)
+    all_y = np.concatenate(all_y)
+
+    # ----- 3. Scan thresholds -----
+    best_thr = 0.5
+    best_f1 = -1
+    rows = []
+
+    for thr in thresholds:
+        preds = (all_probas >= thr).astype(int)
+        f1 = f1_score(all_y, preds)
+        rows.append((thr, f1))
+        if f1 > best_f1:
+            best_f1 = f1
+            best_thr = thr
+
+    thr_df = pd.DataFrame(rows, columns=["threshold", "f1"])
+
+    print(f"Best threshold: {best_thr:.3f}, CV F1: {best_f1:.4f}")
+
+    return best_thr, best_f1, thr_df
+
+
+# %%
+# choose which SVC to optimize:
+# base_svc = make_svc()                 # baseline SVC
+base_svc = best_svc_local               # tuned SVC from grid search
+
+best_thr, best_f1_cv, thr_curve = optimize_threshold_repeated_cv(
+    base_model=base_svc,
+    feature_list=features_strict,        # or moderate/all_feats
+    X_train=X_train,
+    y_train=y_train,
+    pipeline_preprocess=pipeline_preprocess,
+    n_splits=5,
+    n_repeats=5
+)
+
+
+# %%
+# ----- Preprocess train + test with same pipeline -----
+pipeline_preprocess.fit(X_train)
+X_train_prep = pipeline_preprocess.transform(X_train)
+X_test_prep  = pipeline_preprocess.transform(X_test)
+
+feature_names = pipeline_preprocess.get_feature_names_out()
+name_to_idx = {name: i for i, name in enumerate(feature_names)}
+idx = [name_to_idx[f] for f in features_strict]    # same as above
+
+X_train_sel = X_train_prep[:, idx]
+X_test_sel  = X_test_prep[:, idx]
+
+# ----- Fit model on full training data -----
+final_svc = clone(base_svc)   # same hyperparams as used in threshold search
+final_svc.fit(X_train_sel, y_train)
+
+# ----- Probabilities + thresholded predictions on test -----
+test_proba = final_svc.predict_proba(X_test_sel)[:, 1]
+test_preds_opt = (test_proba >= best_thr).astype(int)
+
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+test_results_thr = {
+    "test_accuracy":  accuracy_score(y_test, test_preds_opt),
+    "test_precision": precision_score(y_test, test_preds_opt),
+    "test_recall":    recall_score(y_test, test_preds_opt),
+    "test_f1":        f1_score(y_test, test_preds_opt)
+}
+test_results_thr
+
+
+
