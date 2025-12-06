@@ -32,6 +32,7 @@ The goal is to provide Human Resources with actionable insights to improve reten
 
 ## 📂 Repository Structure
 
+```text
 HR_PROJECT/
 ├── data/
 │   └── raw/
@@ -48,7 +49,7 @@ HR_PROJECT/
 ├── .gitignore                             # Git configuration
 ├── EDSB25_26.csv                          # Group identification file
 └── README.md                              # Project documentation
-
+```
 ---
 
 ### Part 2: Methodology & Metrics
