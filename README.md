@@ -106,7 +106,7 @@ I evaluated two primary candidates: a baseline XGBoost model and a tuned Support
 | **Recall** | 48.9% | **48.9%** |
 | **F1-Score** | 52.4% | 49.5% |
 
-> **Conclusion:** The **SVC model was selected** because it outperformed the baseline XGBoost across **all Cross-Validation metrics**, demonstrating better generalization. On the Test Set, it achieved higher Accuracy (+1.4%) and F1-Score (+1.1%), validating the decision to use a stricter feature set and tuned threshold.
+**Conclusion:** The **SVC model was selected** because it outperformed the baseline XGBoost across **all Cross-Validation metrics**, demonstrating better generalization. On the Test Set, it achieved higher Accuracy (+1.4%) and F1-Score (+1.1%), validating the decision to use a stricter feature set and tuned threshold.
 
 ---
 
