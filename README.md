@@ -50,7 +50,7 @@ HR_PROJECT/
 ├── EDSB25_26.csv                         # Identification of the group
 └── README.md                             # Project documentation
 
-```text
+---
 
 ### Part 2: Methodology & Metrics
 
