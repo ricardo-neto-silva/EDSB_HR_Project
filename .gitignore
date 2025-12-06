@@ -18,3 +18,13 @@ Desktop.ini
 
 # Ignore the tmp folder inside src
 /src/tmp/
+
+# ML Model Logs
+catboost_info/
+logs/
+
+# Misc
+gitignore.txt
+
+# Mac System Files (Good practice to add just in case)
+.DS_Store
