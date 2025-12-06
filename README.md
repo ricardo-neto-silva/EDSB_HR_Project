@@ -39,15 +39,15 @@ HR_PROJECT/
 ├── src/
 │   ├── app.py                            # Gradio application for deployment
 │   ├── hr_attrition.py                   # Main modeling scripts
-│   ├── hr_attrition.ipynb                # Analysis and Training notebook
+│   ├── hr_attrition.ipynb                # Analysis and training notebook
 │   ├── config.json                       # Config for engineered features (medians)
 │   ├── role_medians.json                 # Role-specific income statistics
 │   └── svc_attrition_pipeline.joblib     # Serialized final model
-├── requirements.txt                      # Dependencies for reproduction
-├── pipeline_viz.png                      # Pipeline visualization image
-├── .gitignore                            # Git configuration
-├── EDSB25_26.csv                         # Identification of the group
-└── README.md                             # Project documentation
+├── requirements.txt                      # Dependencies for reproducing the environment
+├── pipeline_viz.png                       # Pipeline visualization image
+├── .gitignore                             # Git configuration
+├── EDSB25_26.csv                          # Group identification file
+└── README.md                              # Project documentation
 
 ---
 
