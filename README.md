@@ -16,11 +16,6 @@ This project aims to understand the factors influencing employee turnover in an 
 
 # 📉 Employee Attrition Risk Prediction
 
-[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Live%20App-blue)](https://huggingface.co/spaces/ricardo-neto-silva/hr-attrition-predictor)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org/)
-[![Scikit-Learn](https://img.shields.io/badge/Library-Scikit_Learn-orange)](https://scikit-learn.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 ## 📌 Project Overview
 This project leverages Machine Learning to predict employee attrition. By analyzing demographic, job-related, and behavioral data, the model identifies employees at risk of leaving the organization.
 
