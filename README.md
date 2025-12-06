@@ -50,7 +50,7 @@ HR_PROJECT/
 ## ⚙️ The Methodology
 
 ### 1. Advanced Feature Engineering
-To maximize predictive power, I engineered several custom features based on domain knowledge:
+To maximize predictive power, we engineered several custom features based on domain knowledge:
 * **TenureIndex:** A composite score weighting years at the company vs. years in the current role.
 * **PromotionGap:** Measures the stagnation period since the last promotion.
 * **Income_Rate_Ratio:** Ratio of monthly income to daily rate to detect compensation disparities.
@@ -71,7 +71,7 @@ The project implements a robust `sklearn.pipeline.Pipeline` designed to prevent 
 
 ## 📊 Model Performance & Selection
 
-I evaluated two primary candidates: a baseline XGBoost model and a tuned Support Vector Classifier (SVC).
+We evaluated two primary candidates: a baseline XGBoost model and a tuned Support Vector Classifier (SVC).
 
 ### 🥇 Final Model: SVC (Tuned + Threshold Optimized)
 * **Algorithm:** Support Vector Classifier (RBF Kernel)
