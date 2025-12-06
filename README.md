@@ -51,7 +51,6 @@ HR_PROJECT/
 └── README.md                             # Project documentation
 
 ```markdown
-
 ### Part 2: Methodology & Metrics
 
 ## ⚙️ The Methodology
