@@ -47,8 +47,6 @@ HR_PROJECT/
 ```
 ---
 
-### Part 2: Methodology & Metrics
-
 ## ⚙️ The Methodology
 
 ### 1. Advanced Feature Engineering
