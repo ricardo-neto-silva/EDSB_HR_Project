@@ -46,7 +46,7 @@ from catboost import CatBoostClassifier
 from itertools import product
 import optuna
 from optuna.samplers import TPESampler
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, roc_auc_score, precision_recall_curve
 from sklearn.metrics import average_precision_score
 from sklearn.base import clone
 import shap
@@ -54,7 +54,8 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
-
+import json
+import joblib
 
 
 # %% [markdown]
@@ -76,7 +77,7 @@ data.describe()
 data.describe(include='object')
 
 # %% [markdown]
-#     From this initial inspection what immediately stands out is that we have 3 constant features: "EmployeeCount", "StandardHours", and "Over18". We can remove those straight away. Additionally, the employee number (ID) feature, does not seem to contain any relevant info, and  we'll drop it too.
+# From this initial inspection what immediately stands out is that we have 3 constant features: "EmployeeCount", "StandardHours", and "Over18". We can remove those straight away. Additionally, the employee number (ID) feature, does not seem to contain any relevant info, and  we'll drop it too.
 
 # %%
 data.drop(columns=['EmployeeCount','Over18','StandardHours','EmployeeNumber'],inplace=True)
@@ -91,7 +92,6 @@ for col in cat_cols:
 
 # %%
 dfSummary(data)
-
 
 # %% [markdown]
 # From the summary above, we verified that the data set doesn't contain duplicates, and we also gathered information about the data's distribution and main statistics.
@@ -667,6 +667,14 @@ X_test["IncomeVsRoleMedian"] = (
     X_test["MonthlyIncome"] / X_test["JobRole"].map(role_medians)
 )
 
+# %%
+# Save for deployment
+role_medians_dict = role_medians.to_dict()
+
+import json
+with open("role_medians.json", "w") as f:
+    json.dump(role_medians_dict, f)
+
 # %% [markdown]
 # ## Rebuilding feature groups on X_train
 
@@ -704,8 +712,6 @@ print("Continuous (incl. engineered):", continuous_features)
 # ## Defining the preprocessing (encoders + passthrough)
 
 # %%
-
-
 # Split ordinal features: BusinessTravel vs the rest 
 ordinal_bt = ["BusinessTravel"]
 ordinal_other = [f for f in ordinal_features if f != "BusinessTravel"]
@@ -782,8 +788,6 @@ print("X_train_processed shape:", X_train_processed.shape)
 print("X_test_processed shape:",  X_test_processed.shape)
 
 #print("Number of feature names:", len(feature_names))
-
-
 
 # %%
 # Grab the ColumnTransformer from the pipeline
@@ -1302,7 +1306,7 @@ for i, f in enumerate(features_moderate, 1):
 #  # Modelling
 
 # %% [markdown]
-# The following code defines two custom scikit-learn transformers to improve workflow when working with feature pipelines. PreprocessToDF converts the output of a ColumnTransformer into a pandas DataFrame with properly named columns, preserving indices and making downstream analysis (e.g., feature selection or SHAP) much easier. ColumnSelectorByName then allows selecting a subset of these encoded features by their column names, ensuring that only features present in the current fold or dataset are retained. Together, these components enable clean, name-aware preprocessing and flexible feature selection within scikit-learn pipelines. 
+# The following code defines two custom scikit-learn transformers to improve workflow when working with feature pipelines. PreprocessToDF converts the output of a ColumnTransformer into a pandas DataFrame with properly named columns, preserving indices and making downstream analysis much easier. ColumnSelectorByName then allows selecting a subset of these encoded features by their column names, ensuring that only features present in the current fold or dataset are retained. Together, these components enable clean, name-aware preprocessing and flexible feature selection within scikit-learn pipelines. 
 
 # %%
 from sklearn.base import BaseEstimator, TransformerMixin, clone
@@ -3307,5 +3311,163 @@ for feat in categorical_features:
     plt.legend(title=feat, bbox_to_anchor=(1.05, 1), loc="upper left")
     plt.tight_layout()
     plt.show()
+
+# %% [markdown]
+# # Train Final Model Using ALL Available Data
+
+# %% [markdown]
+# Adding 'IncomeVsRoleMedian' to data
+
+# %%
+import json
+
+# Load the TRAIN medians (computed earlier)
+with open("role_medians.json") as f:
+    role_medians = json.load(f)
+
+# Add IncomeVsRoleMedian to the FULL dataset (data)
+
+data["IncomeVsRoleMedian"] = data["MonthlyIncome"] / data["JobRole"].map(role_medians)
+
+
+# %%
+print(data.columns)
+
+# %%
+X_full = data.drop("Attrition", axis=1).copy()
+y_full = data["Attrition"].copy()
+
+print(X_full.shape, y_full.shape)
+
+
+# %% [markdown]
+# ## Re-fitting best SVC pipeline on all data
+
+# %%
+print(best_svc_pipeline.named_steps['model'].n_features_in_)
+
+# %%
+print(strict_raw_features)
+
+# %%
+print(len(strict_raw_features))
+
+# %%
+# Create a new dataframe with only the selected features
+X_full_selected = X_full[strict_raw_features].copy()
+
+# Optional: Verify the result
+print(f"Original shape: {X_full.shape}")
+print(f"New shape: {X_full_selected.shape}")
+
+# %%
+# Refit best SVC pipeline on *all* data
+best_svc_pipeline.fit(X_full, y_full)
+
+
+# %% [markdown]
+# ## Saving Optimized Threshold
+
+# %%
+t_opt = svc_threshold_results["global_threshold"]  
+t_opt
+
+# %% [markdown]
+# ## Prediction Helper for Deployment
+
+# %%
+FINAL_THRESHOLD = float(svc_threshold_results["global_threshold"])
+
+def predict_attrition_proba(df):
+    """
+    df: pandas DataFrame with the same columns as X_full
+    Returns: numpy array of P(attrition=1)
+    """
+    return best_svc_pipeline.predict_proba(df)[:, 1]
+
+def predict_attrition_label(df, threshold=FINAL_THRESHOLD):
+    """
+    Returns 0/1 predictions using the chosen decision threshold.
+    """
+    proba = predict_attrition_proba(df)
+    return (proba >= threshold).astype(int)
+
+
+# %% [markdown]
+# ## Saving Model Locally
+
+# %%
+# Save model
+joblib.dump(best_svc_pipeline, "svc_attrition_pipeline.joblib")
+
+# Save threshold
+FINAL_THRESHOLD = float(svc_threshold_results["global_threshold"])
+with open("config.json", "w") as f:
+    json.dump({"threshold": FINAL_THRESHOLD}, f)
+
+
+# %%
+print(best_svc_pipeline.steps)
+
+# %% [markdown]
+# ## Retrieving Cols Necesary to Build Gradio App
+
+# %%
+# 1. Access the custom preprocessing step (named 'preprocess')
+preprocess_step = best_svc_pipeline.named_steps['preprocess']
+
+# 2. Access the internal ColumnTransformer stored inside it
+# Note: Assuming your class stores the 'ct' argument as an attribute named 'ct'
+column_transformer = preprocess_step.ct 
+
+# 3. Now extract the features just like before
+required_columns = []
+
+for name, transformer, columns in column_transformer.transformers_:
+    if name != 'remainder':  # Skip the 'remainder' config
+        # 'columns' is the list of raw feature names for this transformer
+        required_columns.extend(columns)
+
+# Remove duplicates
+required_columns = list(set(required_columns))
+
+print(f"Total inputs needed for Gradio: {len(required_columns)}")
+print(required_columns)
+
+# %%
+import pandas as pd
+import numpy as np
+
+# 1. Create a subset dataframe with only the features the app needs
+# (Make sure 'required_columns' is defined from the previous step)
+app_data = X_full[required_columns]
+
+print(f"--- ANALYZING {len(required_columns)} FEATURES FOR GRADIO ---\n")
+
+for col in app_data.columns:
+    print(f"Feature: '{col}'")
+    
+    # CHECK: Is it numerical?
+    if pd.api.types.is_numeric_dtype(app_data[col]):
+        min_val = app_data[col].min()
+        max_val = app_data[col].max()
+        mean_val = app_data[col].mean()
+        
+        # Suggest Gradio code for numerical inputs
+        print(f"   Type: Numerical")
+        print(f"   Stats: Min={min_val}, Max={max_val}, Mean={mean_val:.2f}")
+        print(f"   Recommendation: gr.Slider(minimum={min_val}, maximum={max_val}, value={mean_val:.2f}, label='{col}')")
+        
+    # CHECK: Is it categorical (object/category)?
+    else:
+        # Get unique values and convert to a clean list
+        unique_vals = app_data[col].unique().tolist()
+        
+        # Suggest Gradio code for categorical inputs
+        print(f"   Type: Categorical")
+        print(f"   Choices ({len(unique_vals)}): {unique_vals}")
+        print(f"   Recommendation: gr.Dropdown(choices={unique_vals}, label='{col}')")
+    
+    print("-" * 30)
 
 
