@@ -50,10 +50,10 @@ HR_PROJECT/
 └── README.md                             # Project documentation
 └── EDSB25_26.csv                         # Identification of the group
 
-### Part 2: Methodology & Metrics
-*(Paste this right after the previous block)*
+---
 
-```markdown
+### Part 2: Methodology & Metrics
+
 ## ⚙️ The Methodology
 
 ### 1. Advanced Feature Engineering
