@@ -32,7 +32,6 @@ The goal is to provide Human Resources with actionable insights to improve reten
 
 ## 📂 Repository Structure
 
-```text
 HR_PROJECT/
 ├── data/
 │   └── raw/
