@@ -61,8 +61,6 @@ To maximize predictive power, I engineered several custom features based on doma
 ### 2. The Pipeline
 The project implements a robust `sklearn.pipeline.Pipeline` designed to prevent data leakage.
 
-![Pipeline Visualization](pipeline_viz.png)
-
 1.  **Custom Preprocessing (`PreprocessToDF`):** Calculates engineered features using training-set statistics (saved in `config.json`) to ensure new data is treated consistently.
 2.  **Encoding (`ColumnTransformer`):**
     * `OrdinalEncoder` for ranked variables (e.g., *BusinessTravel*, *Education*).
