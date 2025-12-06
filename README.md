@@ -28,8 +28,11 @@ The goal is to provide Human Resources with actionable insights to improve reten
 
 **✨ Live Demo:** [Click here to try the Web App on Hugging Face](https://huggingface.co/spaces/ricardo-neto-silva/hr-attrition-predictor)
 
+---
+
 ## 📂 Repository Structure
 
+```text
 HR_PROJECT/
 ├── data/
 │   └── raw/
@@ -44,8 +47,10 @@ HR_PROJECT/
 ├── requirements.txt                      # Dependencies for reproduction
 ├── pipeline_viz.png                      # Pipeline visualization image
 ├── .gitignore                            # Git configuration
+├── EDSB25_26.csv                         # Identification of the group
 └── README.md                             # Project documentation
-└── EDSB25_26.csv                         # Identification of the group
+
+---
 
 ### Part 2: Methodology & Metrics
 
