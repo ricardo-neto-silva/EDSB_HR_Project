@@ -3470,4 +3470,138 @@ for col in app_data.columns:
     
     print("-" * 30)
 
+# %% [markdown]
+# # What If Scenarios
+
+# %%
+# 1. Predict on the original data (X_full)
+baseline_preds = best_svc_pipeline.predict(X_full)
+baseline_attrition_rate = baseline_preds.mean()
+
+print(f"Baseline Predicted Attrition Rate: {baseline_attrition_rate:.2%}")
+
+# %% [markdown]
+# ## Reduction in Overtime for 10% of the emplyees
+
+# %%
+# 1. Create a copy to avoid messing up the original data
+X_simulation = X_full.copy()
+
+# 2. Identify employees who currently have OverTime = 'Yes' (or 1)
+overtime_employees_indices = X_simulation[X_simulation['OverTime'] == 1].index
+
+# 3. Calculate how many people represent 10% of that group
+num_to_flip = int(len(overtime_employees_indices) * 0.10)
+
+# 4. Randomly select 10% of those employees to "stop" doing overtime
+# using np.random.choice to pick random indices
+indices_to_flip = np.random.choice(overtime_employees_indices, size=num_to_flip, replace=False)
+
+# 5. Apply the change: Set their OverTime to 'No' (or 0)
+X_simulation.loc[indices_to_flip, 'OverTime'] = 0 
+
+print(f"Simulated moving {num_to_flip} employees from OverTime Yes -> No")
+
+# %%
+# 1. Predict on the simulated data
+new_preds = best_svc_pipeline.predict(X_simulation)
+new_attrition_rate = new_preds.mean()
+
+# 2. Calculate the impact
+impact = baseline_attrition_rate - new_attrition_rate
+
+print(f"New Predicted Attrition Rate: {new_attrition_rate:.2%}")
+print(f"Impact of 10% OverTime Reduction: Attrition drops by {impact:.2%} percentage points")
+
+# %% [markdown]
+# ## Reduction in Overtime for 50% of Employees
+
+# %%
+# 1. Create a copy to avoid messing up the original data
+X_simulation = X_full.copy()
+
+# 2. Identify employees who currently have OverTime = 'Yes' (or 1)
+overtime_employees_indices = X_simulation[X_simulation['OverTime'] == 1].index
+
+# 3. Calculate how many people represent 10% of that group
+num_to_flip = int(len(overtime_employees_indices) * 0.50)
+
+# 4. Randomly select 10% of those employees to "stop" doing overtime
+# using np.random.choice to pick random indices
+indices_to_flip = np.random.choice(overtime_employees_indices, size=num_to_flip, replace=False)
+
+# 5. Apply the change: Set their OverTime to 'No' (or 0)
+X_simulation.loc[indices_to_flip, 'OverTime'] = 0 
+
+print(f"Simulated moving {num_to_flip} employees from OverTime Yes -> No")
+
+# %%
+# 1. Predict on the simulated data
+new_preds = best_svc_pipeline.predict(X_simulation)
+new_attrition_rate = new_preds.mean()
+
+# 2. Calculate the impact
+impact = baseline_attrition_rate - new_attrition_rate
+
+print(f"New Predicted Attrition Rate: {new_attrition_rate:.2%}")
+print(f"Impact of 10% OverTime Reduction: Attrition drops by {impact:.2%} percentage points")
+
+# %% [markdown]
+# ## Increase in salary of 10% for all Employess
+
+# %%
+# 1. Establish Baseline
+baseline_preds = best_svc_pipeline.predict(X_full)
+baseline_attrition = baseline_preds.mean()
+
+# 2. Create the Simulation Data
+X_raise = X_full.copy()
+raise_pct = 0.10  # 10% increase
+
+# 3. Apply the raise to the Raw Variable
+X_raise['MonthlyIncome'] = X_raise['MonthlyIncome'] * (1 + raise_pct)
+
+# 4. CRITICAL: Propagate the change to Engineered Features
+# Since these are linear ratios, we can simply scale them by the same percentage
+X_raise['IncomeVsRoleMedian'] = X_raise['IncomeVsRoleMedian'] * (1 + raise_pct)
+X_raise['Income_Rate_Ratio'] = X_raise['Income_Rate_Ratio'] * (1 + raise_pct)
+
+# 5. Predict on the new data
+new_preds_raise = best_svc_pipeline.predict(X_raise)
+new_attrition_raise = new_preds_raise.mean()
+
+# 6. Calculate Impact
+reduction = baseline_attrition - new_attrition_raise
+
+print(f"--- 10% Salary Increase Simulation ---")
+print(f"Baseline Attrition: {baseline_attrition:.2%}")
+print(f"Projected Attrition: {new_attrition_raise:.2%}")
+print(f"Net Reduction: {reduction:.2%} points")
+
+# %% [markdown]
+# ## Stock Option Upgrade of 1 Level for ALL Employees
+
+# %%
+# 1. Establish Baseline
+baseline_preds = best_svc_pipeline.predict(X_full)
+baseline_attrition = baseline_preds.mean()
+
+# 2. Create Simulation Data
+X_stocks = X_full.copy()
+
+# 3. Apply the "Stock Grant": Increase level by 1, max out at 3
+X_stocks['StockOptionLevel'] = np.minimum(X_stocks['StockOptionLevel'] + 1, 3)
+
+# 4. Predict
+new_preds_stocks = best_svc_pipeline.predict(X_stocks)
+new_attrition_stocks = new_preds_stocks.mean()
+
+# 5. Calculate Impact
+reduction = baseline_attrition - new_attrition_stocks
+
+print(f"--- Stock Option Upgrade Scenario (+1 Level) ---")
+print(f"Baseline Attrition: {baseline_attrition:.2%}")
+print(f"Projected Attrition: {new_attrition_stocks:.2%}")
+print(f"Net Reduction: {reduction:.2%} points")
+
 
