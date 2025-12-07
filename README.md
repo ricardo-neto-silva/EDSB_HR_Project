@@ -40,10 +40,10 @@ HR_PROJECT/
 │   ├── role_medians.json                 # Role-specific income statistics
 │   └── svc_attrition_pipeline.joblib     # Serialized final model
 ├── requirements.txt                      # Dependencies for reproducing the environment
-├── pipeline_viz.png                       # Pipeline visualization image
-├── .gitignore                             # Git configuration
-├── EDSB25_26.csv                          # Group identification file
-└── README.md                              # Project documentation
+├── pipeline_viz.png                      # Pipeline visualization image
+├── .gitignore                            # Git configuration
+├── EDSB25_26.csv                         # Group identification file
+└── README.md                             # Project documentation
 ```
 ---
 
